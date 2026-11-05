@@ -52,7 +52,7 @@ public/ (static site) ──► loads events.json ──► filters, picks & ren
 | --- | --- |
 | `public/` | The whole website (HTML, CSS, plain ES modules). No build step. |
 | `public/js/shared/` | Logic shared by the site, the refresh script and the tests: Central-time helpers, taxonomy, filtering/picks, calendar & map links. |
-| `scripts/sources/` | One adapter per source (`cstx.mjs`, `destinationBryan.mjs`, `theatreCompany.mjs`, `places.mjs`, …). |
+| `scripts/sources/` | One adapter per source (`cstx.mjs`, `destinationBryan.mjs`, `bcslibrary.mjs`, `tamu.mjs`, `theatreCompany.mjs`, `places.mjs`). |
 | `scripts/lib/ics.mjs` | Small iCalendar reader with recurrence expansion (RRULE/RDATE/EXDATE). |
 | `data/places.json` | Hand-curated regularly-open places, each fact copied from an official page. |
 | `scripts/make-demo.mjs` | Builds the clearly-labelled demo data through the real pipeline. |
@@ -80,7 +80,7 @@ Recommended: **GitHub Pages + GitHub Actions**.
 | --- | --- |
 | Hosting (GitHub Pages, static files) | $0 |
 | Scheduled refresh (GitHub Actions, ~10–15 min/day) | $0 for public repos; a private repo would use ~450 of the 2,000 free minutes/month on the Free plan |
-| Data sources | $0 — public pages and a public calendar feed; no API keys |
+| Data sources | $0 — public pages and public calendar feeds; no API keys |
 | Paid APIs / AI / database / accounts | None |
 | Custom domain (optional) | ~$10–15/year |
 

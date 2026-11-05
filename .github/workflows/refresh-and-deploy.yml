@@ -30,6 +30,13 @@ jobs:
           node-version: 22
       - name: Unit tests
         run: npm test
+      - name: Stamp the service-worker cache version from the site files
+        # Same files => same version => returning visitors re-download nothing; data files are network-first and not versioned.
+        run: |
+          V=$(cat public/index.html public/styles.css public/manifest.webmanifest public/js/*.js public/js/shared/*.js | sha1sum | cut -c1-12)
+          sed -i -E "s/^(const VERSION = ')[^']*(';)$/\1$V\2/" public/sw.js
+          printf '{ "version": "%s" }\n' "$V" > public/sw-version.json
+          grep -q "const VERSION = '$V';" public/sw.js
       - name: Decide whether to crawl the sources
         # Scheduled and manual runs always refresh. A push refreshes only when the pipeline or curated data
         # changed; a pure site/docs change reuses the live data so the sources are not crawled again.
