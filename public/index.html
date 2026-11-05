@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>BCS Life Radar</title>
+  <meta name="description" content="Find things to do in Bryan–College Station, Texas, that fit your time, budget, transportation and mood.">
+  <meta name="theme-color" content="#0f5f5c">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%230f5f5c'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%23fff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2.5' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="#/" aria-label="BCS Life Radar home">
+        <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="currentColor"/><circle cx="16" cy="16" r="8" fill="none" stroke="var(--bg)" stroke-width="2"/><circle cx="16" cy="16" r="2.5" fill="var(--bg)"/></svg>
+        <span><strong>BCS Life Radar</strong><small class="tagline">Bryan–College Station · all times Central (CT)</small></span>
+      </a>
+      <nav class="tabs" aria-label="Sections">
+        <a href="#/" data-tab="discover">Discover</a>
+        <a href="#/saved" data-tab="saved">Saved <span class="count" id="savedCount" hidden></span></a>
+        <a href="#/sources" data-tab="sources">Sources</a>
+      </nav>
+    </div>
+  </header>
+
+  <div id="banners" class="wrap banners" aria-live="polite"></div>
+
+  <main id="main" class="wrap">
+    <!-- DISCOVER -->
+    <section id="view-discover" class="view" aria-labelledby="discoverTitle">
+      <div class="layout">
+        <aside class="filters" aria-label="Filters">
+          <form id="filters" autocomplete="off">
+            <fieldset class="when">
+              <legend>When</legend>
+              <div class="chips scroll-row" role="radiogroup" aria-label="When">
+                <button type="button" class="chip" data-when="week">Next 7 days</button>
+                <button type="button" class="chip" data-when="today">Today</button>
+                <button type="button" class="chip" data-when="tomorrow">Tomorrow</button>
+                <button type="button" class="chip" data-when="weekend">This weekend</button>
+                <label class="date-chip"><span class="sr">Pick a date</span><input type="date" id="f-date" name="date" aria-label="Pick a date"></label>
+              </div>
+            </fieldset>
+
+            <details id="moreFilters" class="more">
+              <summary>More filters <span id="activeCount" class="count" hidden></span></summary>
+
+              <div class="grid2">
+                <label>Time of day
+                  <select name="timeOfDay">
+                    <option value="any">Any time</option>
+                    <option value="soon">Now / next 3 hours</option>
+                    <option value="morning">Morning (before noon)</option>
+                    <option value="afternoon">Afternoon (noon–5 PM)</option>
+                    <option value="evening">Evening (after 5 PM)</option>
+                  </select>
+                </label>
+                <label>Time I have
+                  <select name="timeAvail">
+                    <option value="any">No limit</option>
+                    <option value="1">Up to 1 hour</option>
+                    <option value="2">Up to 2 hours</option>
+                    <option value="4">Up to 4 hours</option>
+                  </select>
+                </label>
+                <label>Budget
+                  <select name="budget">
+                    <option value="any">Any budget</option>
+                    <option value="free">Free only</option>
+                    <option value="10">Up to $10</option>
+                    <option value="25">Up to $25</option>
+                    <option value="50">Up to $50</option>
+                  </select>
+                </label>
+                <label>Getting there
+                  <select name="transport">
+                    <option value="any">Any way</option>
+                    <option value="walk">Walking</option>
+                    <option value="bike">Biking</option>
+                    <option value="transit">Bus / transit</option>
+                    <option value="drive">Driving / rideshare</option>
+                  </select>
+                </label>
+              </div>
+              <div class="loc-row">
+                <button type="button" id="useLocation" class="btn small">Use my location</button>
+                <p class="hint" id="transportHint">Directions open in your maps app with the mode you pick. Travel times aren't estimated here.</p>
+              </div>
+
+              <fieldset>
+                <legend>Mood <span class="hint">(optional)</span></legend>
+                <div class="chips" id="moodChips"></div>
+              </fieldset>
+              <fieldset>
+                <legend>Activity type</legend>
+                <div class="chips" id="typeChips"></div>
+              </fieldset>
+
+              <div class="grid2">
+                <label>Show
+                  <select name="kind">
+                    <option value="all">Everything</option>
+                    <option value="events">Events only</option>
+                    <option value="one-time">One-time events</option>
+                    <option value="recurring">Recurring events</option>
+                    <option value="multi-day">Multi-day / ongoing</option>
+                    <option value="place">Places that are regularly open</option>
+                  </select>
+                </label>
+                <label>Search
+                  <input type="search" name="q" placeholder="e.g. trivia, park, yoga">
+                </label>
+              </div>
+              <label class="check"><input type="checkbox" name="includeUnknown" checked> Include items with missing cost, duration, hours or location</label>
+              <button type="button" id="resetFilters" class="btn link">Reset filters</button>
+            </details>
+          </form>
+        </aside>
+
+        <div class="results">
+          <div class="results-head">
+            <h1 id="discoverTitle">Things to do</h1>
+            <p id="summary" class="summary" aria-live="polite"></p>
+          </div>
+          <section aria-labelledby="picksTitle">
+            <h2 id="picksTitle" class="section-title">Top picks <span class="hint">— a varied mix; why each was picked is shown on the card</span></h2>
+            <div id="picks" class="cards"></div>
+          </section>
+          <div class="browse-row">
+            <button type="button" id="toggleAll" class="btn" aria-expanded="false" aria-controls="allResults"></button>
+          </div>
+          <section id="allResults" hidden aria-label="All results"></section>
+        </div>
+      </div>
+    </section>
+
+    <!-- SAVED -->
+    <section id="view-saved" class="view" hidden aria-labelledby="savedTitle">
+      <h1 id="savedTitle">Saved &amp; history</h1>
+      <p class="hint">Saved on this device only (browser storage). Nothing is sent anywhere.</p>
+      <div id="savedContent"></div>
+    </section>
+
+    <!-- SOURCES -->
+    <section id="view-sources" class="view" hidden aria-labelledby="sourcesTitle">
+      <h1 id="sourcesTitle">Sources &amp; data notes</h1>
+      <div id="sourcesContent"></div>
+    </section>
+  </main>
+
+  <dialog id="detail" aria-labelledby="detailTitle">
+    <div class="dialog-inner">
+      <button type="button" class="close" id="closeDetail" aria-label="Close details">×</button>
+      <div id="detailBody"></div>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <footer class="site-footer wrap">
+    <p>Information comes from public pages of the City of College Station and Destination Bryan. Always confirm details with the original source before you go. Personal project; not affiliated with either organization.</p>
+  </footer>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

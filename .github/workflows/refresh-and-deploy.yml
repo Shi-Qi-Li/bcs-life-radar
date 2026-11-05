@@ -1,0 +1,48 @@
+name: Refresh data and deploy
+
+on:
+  schedule:
+    # Twice a day: 06:17 and 15:17 America/Chicago in CST (12:17 and 21:17 UTC). Off the hour on purpose.
+    - cron: '17 12,21 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: refresh-and-deploy
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Unit tests
+        run: npm test
+      - name: Refresh data from sources
+        # A partial failure still publishes (the site shows which source failed and when it last worked).
+        # Exit code 2 = every source failed: keep the previous data and fail the job so you get an email.
+        run: npm run refresh
+      - name: Commit updated data (keeps history and the last good copy)
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "bcs-life-radar-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/data/events.json
+          git diff --cached --quiet || git commit -m "Refresh event data"
+          git push
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+      - id: deployment
+        uses: actions/deploy-pages@v4

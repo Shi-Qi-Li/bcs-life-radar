@@ -1,0 +1,776 @@
+{
+ "schema": 1,
+ "isDemo": true,
+ "demoNow": "2026-11-06T16:00:00.000Z",
+ "generatedAt": "2026-11-06T12:00:00.000Z",
+ "timezone": "America/Chicago",
+ "window": {
+  "from": "2026-11-06T06:00:00.000Z",
+  "to": "2026-12-07T06:00:00.000Z",
+  "days": 30
+ },
+ "counts": {
+  "items": 16,
+  "expiredRemoved": 1,
+  "duplicatesRemoved": 1
+ },
+ "sources": [
+  {
+   "id": "cstx",
+   "name": "City of College Station Calendar (DEMO fixture)",
+   "homepage": "https://www.cstx.gov/calendar/",
+   "method": "Fixture ICS file in tests/fixtures/demo.ics",
+   "status": "ok",
+   "lastAttempt": "2026-11-06T12:00:00.000Z",
+   "lastSuccess": "2026-11-06T12:00:00.000Z",
+   "itemCount": 11,
+   "error": null
+  },
+  {
+   "id": "dbryan",
+   "name": "Destination Bryan (DEMO fixture)",
+   "homepage": "https://www.destinationbryan.com/events/",
+   "method": "Fixture objects in scripts/make-demo.mjs",
+   "status": "ok",
+   "lastAttempt": "2026-11-06T12:00:00.000Z",
+   "lastSuccess": "2026-11-06T12:00:00.000Z",
+   "itemCount": 6,
+   "error": null
+  }
+ ],
+ "items": [
+  {
+   "id": "place:demo-nature-center",
+   "seriesId": "place:demo-nature-center",
+   "kind": "place",
+   "title": "[DEMO] Example Nature Center",
+   "description": "Fictional place with published hours, used to demonstrate “regularly open” entries.",
+   "summary": "Fictional place with published hours.",
+   "start": null,
+   "end": null,
+   "allDay": false,
+   "endKnown": false,
+   "timeNote": null,
+   "location": {
+    "name": "Demo Nature Center",
+    "address": "100 Example Rd, College Station, TX 77845",
+    "lat": 30.568,
+    "lng": -96.211
+   },
+   "cost": {
+    "status": "unknown",
+    "label": "Cost not listed on source page",
+    "min": null
+   },
+   "registration": {
+    "status": "unknown",
+    "label": "Registration requirements not listed",
+    "url": null
+   },
+   "types": [
+    "outdoors",
+    "learning",
+    "family"
+   ],
+   "sourceTags": [],
+   "hours": [
+    {
+     "days": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "open": "09:00",
+     "close": "17:00"
+    }
+   ],
+   "hoursText": "Daily, 9 a.m.–5 p.m. (fictional)",
+   "closures": [
+    [
+     "2026-11-08",
+     "2026-11-08"
+    ]
+   ],
+   "closuresText": "Closed: Nov. 8 (fictional)",
+   "verification": {
+    "status": "verified",
+    "note": null,
+    "verifiedOn": "2026-11-06"
+   },
+   "sourceId": "places",
+   "sourceName": "Demo facility page",
+   "sourceUrl": "https://www.cstx.gov/parks-recreation-culture/facilities-and-rentals/",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "groupKey": "demo-example-nature-center"
+  },
+  {
+   "seriesId": "dbryan:demo-quilt-exhibit",
+   "title": "[DEMO] Community Quilt Exhibit",
+   "description": "Fictional multi-day exhibit.",
+   "summary": "Fictional multi-day exhibit.",
+   "location": {
+    "name": "Demo History Museum",
+    "address": "900 Example Pkwy, Bryan, TX 77802",
+    "lat": 30.66,
+    "lng": -96.36
+   },
+   "cost": {
+    "status": "mixed",
+    "label": "$8 adults | $4 kids | Free under 5",
+    "min": 4
+   },
+   "registration": {
+    "status": "unknown",
+    "label": "Registration requirements not listed",
+    "url": null
+   },
+   "types": [
+    "arts"
+   ],
+   "sourceTags": [],
+   "contact": null,
+   "websiteUrl": null,
+   "sourceId": "dbryan",
+   "sourceName": "Destination Bryan (DEMO)",
+   "sourceUrl": "https://www.destinationbryan.com/events/demo-quilt-exhibit/",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "id": "dbryan:demo-quilt-exhibit@1793509200000",
+   "start": "2026-11-01T05:00:00.000Z",
+   "end": "2027-01-01T06:00:00.000Z",
+   "kind": "multi-day",
+   "allDay": true,
+   "endKnown": true,
+   "timeNote": "Listed hours: 10:00 AM – 4:00 PM (as published; confirm with the venue)",
+   "runStart": "2026-11-01",
+   "runEnd": "2026-12-31",
+   "groupKey": "demo-community-quilt-exhibit"
+  },
+  {
+   "seriesId": "cstx:demo-lunch-concert",
+   "kind": "one-time",
+   "title": "[DEMO] Lunchtime Park Concert",
+   "description": "Fictional demo concert. Bring a blanket. No registration required.",
+   "summary": "Fictional demo concert. Bring a blanket. No registration required.",
+   "location": {
+    "name": "Demo Amphitheater",
+    "address": "200 Example Dr, College Station, TX 77840",
+    "lat": 30.62,
+    "lng": -96.31
+   },
+   "cost": {
+    "status": "free",
+    "label": "Free",
+    "min": 0
+   },
+   "registration": {
+    "status": "not-required",
+    "label": "No registration required (per description)",
+    "url": null
+   },
+   "types": [
+    "shows",
+    "outdoors",
+    "family"
+   ],
+   "sourceTags": [
+    "Music",
+    "Parks",
+    "Free",
+    "Family Friendly",
+    "Event"
+   ],
+   "contact": null,
+   "sourceId": "cstx",
+   "sourceName": "City of College Station Calendar (DEMO)",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "id": "cstx:demo-lunch-concert@1793988000000",
+   "start": "2026-11-06T18:00:00.000Z",
+   "end": "2026-11-06T19:00:00.000Z",
+   "endKnown": true,
+   "allDay": false,
+   "timeNote": null,
+   "sourceUrl": "https://events.timely.fun/yl7pe679/event/demo-concert?instance_id=20261106120000",
+   "groupKey": "demo-lunchtime-park-concert",
+   "alsoListedBy": [
+    {
+     "sourceName": "Destination Bryan (DEMO)",
+     "url": "https://www.destinationbryan.com/events/demo-lunch-concert/"
+    }
+   ]
+  },
+  {
+   "seriesId": "cstx:demo-trivia",
+   "kind": "one-time",
+   "title": "[DEMO] Evening Trivia Night",
+   "description": "Fictional demo with no end time and no listed price.",
+   "summary": "Fictional demo with no end time and no listed price.",
+   "location": {
+    "name": "Demo Hall",
+    "address": "500 Example Blvd, Bryan, TX 77803",
+    "lat": null,
+    "lng": null
+   },
+   "cost": {
+    "status": "paid",
+    "label": "Paid — amount not listed",
+    "min": null
+   },
+   "registration": {
+    "status": "unknown",
+    "label": "Registration requirements not listed",
+    "url": null
+   },
+   "types": [
+    "social"
+   ],
+   "sourceTags": [
+    "Games",
+    "Paid",
+    "Event"
+   ],
+   "contact": null,
+   "sourceId": "cstx",
+   "sourceName": "City of College Station Calendar (DEMO)",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "id": "cstx:demo-trivia@1794013200000",
+   "start": "2026-11-07T01:00:00.000Z",
+   "end": null,
+   "endKnown": false,
+   "allDay": false,
+   "timeNote": null,
+   "sourceUrl": "https://events.timely.fun/yl7pe679/event/demo-trivia?instance_id=20261106190000",
+   "groupKey": "demo-evening-trivia-night"
+  },
+  {
+   "seriesId": "dbryan:demo-craft-market",
+   "title": "[DEMO] Downtown Craft Market",
+   "description": "Fictional market with no listed time or cost.",
+   "summary": "Fictional market with no listed time or cost.",
+   "location": {
+    "name": null,
+    "address": "1000 Example Main St, Bryan, TX 77803",
+    "lat": 30.675,
+    "lng": -96.372
+   },
+   "cost": {
+    "status": "unknown",
+    "label": "Cost not listed",
+    "min": null
+   },
+   "registration": {
+    "status": "unknown",
+    "label": "Registration requirements not listed",
+    "url": null
+   },
+   "types": [
+    "markets",
+    "arts"
+   ],
+   "sourceTags": [],
+   "contact": null,
+   "websiteUrl": null,
+   "sourceId": "dbryan",
+   "sourceName": "Destination Bryan (DEMO)",
+   "sourceUrl": "https://www.destinationbryan.com/events/demo-craft-market/",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "id": "dbryan:demo-craft-market@1794031200000",
+   "start": "2026-11-07T06:00:00.000Z",
+   "end": "2026-11-08T06:00:00.000Z",
+   "kind": "one-time",
+   "allDay": true,
+   "endKnown": false,
+   "timeNote": "No time listed by source",
+   "groupKey": "demo-downtown-craft-market"
+  },
+  {
+   "seriesId": "cstx:demo-yoga",
+   "kind": "recurring",
+   "title": "[DEMO] Saturday Yoga in the Park",
+   "description": "Fictional weekly demo class. Starts in CDT (Oct 24) and continues after the DST change (Nov 1) at the same 8 AM wall-clock time. Nov 14 is cancelled via EXDATE.",
+   "summary": "Fictional weekly demo class. Starts in CDT (Oct 24) and continues after the DST change (Nov 1) at the same 8 AM wall-clock time. Nov 14 is cancelled via EXDATE.",
+   "location": {
+    "name": "Demo Park",
+    "address": "300 Example Ave, College Station, TX 77840",
+    "lat": 30.61,
+    "lng": -96.3
+   },
+   "cost": {
+    "status": "free",
+    "label": "Free",
+    "min": 0
+   },
+   "registration": {
+    "status": "unknown",
+    "label": "Registration requirements not listed",
+    "url": null
+   },
+   "types": [
+    "outdoors",
+    "fitness"
+   ],
+   "sourceTags": [
+    "Fitness",
+    "Parks",
+    "Free",
+    "Adult (18+)",
+    "Program"
+   ],
+   "contact": null,
+   "sourceId": "cstx",
+   "sourceName": "City of College Station Calendar (DEMO)",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "id": "cstx:demo-yoga@1794060000000",
+   "start": "2026-11-07T14:00:00.000Z",
+   "end": "2026-11-07T15:00:00.000Z",
+   "endKnown": true,
+   "allDay": false,
+   "timeNote": null,
+   "sourceUrl": "https://events.timely.fun/yl7pe679/event/demo-yoga?instance_id=20261107080000",
+   "groupKey": "demo-saturday-yoga-in-the-park"
+  },
+  {
+   "seriesId": "cstx:demo-pottery",
+   "kind": "one-time",
+   "title": "[DEMO] Beginner Pottery Workshop",
+   "description": "Fictional demo workshop.\nRegister here",
+   "summary": "Fictional demo workshop. Register here",
+   "location": {
+    "name": "Demo Community Center",
+    "address": "400 Example St, College Station, TX 77840",
+    "lat": 30.63,
+    "lng": -96.33
+   },
+   "cost": {
+    "status": "paid",
+    "label": "$15 Resident/$18 Non-Resident",
+    "min": 15
+   },
+   "registration": {
+    "status": "required",
+    "label": "Registration required",
+    "url": "https://example.com/register"
+   },
+   "types": [
+    "learning",
+    "arts"
+   ],
+   "sourceTags": [
+    "Registration Required",
+    "Paid",
+    "Adult (18+)",
+    "Program"
+   ],
+   "contact": null,
+   "sourceId": "cstx",
+   "sourceName": "City of College Station Calendar (DEMO)",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "id": "cstx:demo-pottery@1794081600000",
+   "start": "2026-11-07T20:00:00.000Z",
+   "end": "2026-11-07T23:00:00.000Z",
+   "endKnown": true,
+   "allDay": false,
+   "timeNote": null,
+   "sourceUrl": "https://events.timely.fun/yl7pe679/event/demo-pottery?instance_id=20261107140000",
+   "groupKey": "demo-beginner-pottery-workshop"
+  },
+  {
+   "seriesId": "cstx:demo-stars",
+   "kind": "one-time",
+   "title": "[DEMO] Stargazing Night",
+   "description": "Times given in UTC (01:00Z) – must display as Sat 7 PM CST.",
+   "summary": "Times given in UTC (01:00Z) – must display as Sat 7 PM CST.",
+   "location": {
+    "name": "Demo Nature Center",
+    "address": "100 Example Rd, College Station, TX 77845",
+    "lat": 30.568,
+    "lng": -96.211
+   },
+   "cost": {
+    "status": "free",
+    "label": "Free",
+    "min": 0
+   },
+   "registration": {
+    "status": "unknown",
+    "label": "Registration requirements not listed",
+    "url": null
+   },
+   "types": [
+    "outdoors",
+    "family"
+   ],
+   "sourceTags": [
+    "Nature",
+    "Free",
+    "Family Friendly",
+    "Event"
+   ],
+   "contact": null,
+   "sourceId": "cstx",
+   "sourceName": "City of College Station Calendar (DEMO)",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "id": "cstx:demo-stars@1794099600000",
+   "start": "2026-11-08T01:00:00.000Z",
+   "end": "2026-11-08T03:00:00.000Z",
+   "endKnown": true,
+   "allDay": false,
+   "timeNote": null,
+   "sourceUrl": "https://events.timely.fun/yl7pe679/event/demo-stars?instance_id=20261107190000",
+   "groupKey": "demo-stargazing-night"
+  },
+  {
+   "seriesId": "cstx:demo-festival",
+   "kind": "one-time",
+   "title": "[DEMO] Harvest Festival",
+   "description": "Fictional all-day demo festival.",
+   "summary": "Fictional all-day demo festival.",
+   "location": {
+    "name": "Demo Square",
+    "address": "600 Example Way, Bryan, TX 77803",
+    "lat": 30.674,
+    "lng": -96.37
+   },
+   "cost": {
+    "status": "free",
+    "label": "Free",
+    "min": 0
+   },
+   "registration": {
+    "status": "unknown",
+    "label": "Registration requirements not listed",
+    "url": null
+   },
+   "types": [
+    "community",
+    "food",
+    "family"
+   ],
+   "sourceTags": [
+    "Community Event",
+    "Food/Drinks",
+    "Free",
+    "Family Friendly",
+    "Event"
+   ],
+   "contact": null,
+   "sourceId": "cstx",
+   "sourceName": "City of College Station Calendar (DEMO)",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "id": "cstx:demo-festival@1794117600000",
+   "start": "2026-11-08T06:00:00.000Z",
+   "end": "2026-11-09T06:00:00.000Z",
+   "endKnown": true,
+   "allDay": true,
+   "timeNote": null,
+   "sourceUrl": "https://events.timely.fun/yl7pe679/event/demo-festival?instance_id=20261108000000",
+   "groupKey": "demo-harvest-festival"
+  },
+  {
+   "seriesId": "cstx:demo-bookclub",
+   "kind": "recurring",
+   "title": "[DEMO] Library Book Club",
+   "description": "Second Tuesday of every month (fictional).",
+   "summary": "Second Tuesday of every month (fictional).",
+   "location": {
+    "name": "Demo Library",
+    "address": "700 Example Ln, College Station, TX 77845",
+    "lat": 30.59,
+    "lng": -96.29
+   },
+   "cost": {
+    "status": "free",
+    "label": "Free",
+    "min": 0
+   },
+   "registration": {
+    "status": "unknown",
+    "label": "Registration requirements not listed",
+    "url": null
+   },
+   "types": [
+    "learning",
+    "arts",
+    "social"
+   ],
+   "sourceTags": [
+    "Books",
+    "Adult (18+)",
+    "Free",
+    "Program"
+   ],
+   "contact": null,
+   "sourceId": "cstx",
+   "sourceName": "City of College Station Calendar (DEMO)",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "id": "cstx:demo-bookclub@1794355200000",
+   "start": "2026-11-11T00:00:00.000Z",
+   "end": "2026-11-11T01:00:00.000Z",
+   "endKnown": true,
+   "allDay": false,
+   "timeNote": null,
+   "sourceUrl": "https://events.timely.fun/yl7pe679/event/demo-books?instance_id=20261110180000",
+   "groupKey": "demo-library-book-club"
+  },
+  {
+   "seriesId": "dbryan:demo-open-mic",
+   "title": "[DEMO] Wednesday Open Mic",
+   "description": "Fictional weekly open mic. Sign up at the door.",
+   "summary": "Fictional weekly open mic. Sign up at the door.",
+   "location": {
+    "name": "Demo Coffee House",
+    "address": "800 Example Main St, Bryan, TX 77803",
+    "lat": 30.674,
+    "lng": -96.371
+   },
+   "cost": {
+    "status": "free",
+    "label": "Free",
+    "min": 0
+   },
+   "registration": {
+    "status": "mentioned",
+    "label": "Registration or tickets mentioned — check source",
+    "url": null
+   },
+   "types": [
+    "shows"
+   ],
+   "sourceTags": [],
+   "contact": null,
+   "websiteUrl": null,
+   "sourceId": "dbryan",
+   "sourceName": "Destination Bryan (DEMO)",
+   "sourceUrl": "https://www.destinationbryan.com/events/demo-open-mic/",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "id": "dbryan:demo-open-mic@1794445200000",
+   "start": "2026-11-12T01:00:00.000Z",
+   "end": "2026-11-12T03:00:00.000Z",
+   "kind": "recurring",
+   "allDay": false,
+   "endKnown": true,
+   "groupKey": "demo-wednesday-open-mic"
+  },
+  {
+   "seriesId": "dbryan:demo-open-mic",
+   "title": "[DEMO] Wednesday Open Mic",
+   "description": "Fictional weekly open mic. Sign up at the door.",
+   "summary": "Fictional weekly open mic. Sign up at the door.",
+   "location": {
+    "name": "Demo Coffee House",
+    "address": "800 Example Main St, Bryan, TX 77803",
+    "lat": 30.674,
+    "lng": -96.371
+   },
+   "cost": {
+    "status": "free",
+    "label": "Free",
+    "min": 0
+   },
+   "registration": {
+    "status": "mentioned",
+    "label": "Registration or tickets mentioned — check source",
+    "url": null
+   },
+   "types": [
+    "shows"
+   ],
+   "sourceTags": [],
+   "contact": null,
+   "websiteUrl": null,
+   "sourceId": "dbryan",
+   "sourceName": "Destination Bryan (DEMO)",
+   "sourceUrl": "https://www.destinationbryan.com/events/demo-open-mic/",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "id": "dbryan:demo-open-mic@1795050000000",
+   "start": "2026-11-19T01:00:00.000Z",
+   "end": "2026-11-19T03:00:00.000Z",
+   "kind": "recurring",
+   "allDay": false,
+   "endKnown": true,
+   "timeNote": "Time copied from the series listing — confirm for this date",
+   "groupKey": "demo-wednesday-open-mic"
+  },
+  {
+   "seriesId": "cstx:demo-yoga",
+   "kind": "recurring",
+   "title": "[DEMO] Saturday Yoga in the Park",
+   "description": "Fictional weekly demo class. Starts in CDT (Oct 24) and continues after the DST change (Nov 1) at the same 8 AM wall-clock time. Nov 14 is cancelled via EXDATE.",
+   "summary": "Fictional weekly demo class. Starts in CDT (Oct 24) and continues after the DST change (Nov 1) at the same 8 AM wall-clock time. Nov 14 is cancelled via EXDATE.",
+   "location": {
+    "name": "Demo Park",
+    "address": "300 Example Ave, College Station, TX 77840",
+    "lat": 30.61,
+    "lng": -96.3
+   },
+   "cost": {
+    "status": "free",
+    "label": "Free",
+    "min": 0
+   },
+   "registration": {
+    "status": "unknown",
+    "label": "Registration requirements not listed",
+    "url": null
+   },
+   "types": [
+    "outdoors",
+    "fitness"
+   ],
+   "sourceTags": [
+    "Fitness",
+    "Parks",
+    "Free",
+    "Adult (18+)",
+    "Program"
+   ],
+   "contact": null,
+   "sourceId": "cstx",
+   "sourceName": "City of College Station Calendar (DEMO)",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "id": "cstx:demo-yoga@1795269600000",
+   "start": "2026-11-21T14:00:00.000Z",
+   "end": "2026-11-21T15:00:00.000Z",
+   "endKnown": true,
+   "allDay": false,
+   "timeNote": null,
+   "sourceUrl": "https://events.timely.fun/yl7pe679/event/demo-yoga?instance_id=20261121080000",
+   "groupKey": "demo-saturday-yoga-in-the-park"
+  },
+  {
+   "seriesId": "dbryan:demo-open-mic",
+   "title": "[DEMO] Wednesday Open Mic",
+   "description": "Fictional weekly open mic. Sign up at the door.",
+   "summary": "Fictional weekly open mic. Sign up at the door.",
+   "location": {
+    "name": "Demo Coffee House",
+    "address": "800 Example Main St, Bryan, TX 77803",
+    "lat": 30.674,
+    "lng": -96.371
+   },
+   "cost": {
+    "status": "free",
+    "label": "Free",
+    "min": 0
+   },
+   "registration": {
+    "status": "mentioned",
+    "label": "Registration or tickets mentioned — check source",
+    "url": null
+   },
+   "types": [
+    "shows"
+   ],
+   "sourceTags": [],
+   "contact": null,
+   "websiteUrl": null,
+   "sourceId": "dbryan",
+   "sourceName": "Destination Bryan (DEMO)",
+   "sourceUrl": "https://www.destinationbryan.com/events/demo-open-mic/",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "id": "dbryan:demo-open-mic@1795654800000",
+   "start": "2026-11-26T01:00:00.000Z",
+   "end": "2026-11-26T03:00:00.000Z",
+   "kind": "recurring",
+   "allDay": false,
+   "endKnown": true,
+   "timeNote": "Time copied from the series listing — confirm for this date",
+   "groupKey": "demo-wednesday-open-mic"
+  },
+  {
+   "seriesId": "cstx:demo-yoga",
+   "kind": "recurring",
+   "title": "[DEMO] Saturday Yoga in the Park",
+   "description": "Fictional weekly demo class. Starts in CDT (Oct 24) and continues after the DST change (Nov 1) at the same 8 AM wall-clock time. Nov 14 is cancelled via EXDATE.",
+   "summary": "Fictional weekly demo class. Starts in CDT (Oct 24) and continues after the DST change (Nov 1) at the same 8 AM wall-clock time. Nov 14 is cancelled via EXDATE.",
+   "location": {
+    "name": "Demo Park",
+    "address": "300 Example Ave, College Station, TX 77840",
+    "lat": 30.61,
+    "lng": -96.3
+   },
+   "cost": {
+    "status": "free",
+    "label": "Free",
+    "min": 0
+   },
+   "registration": {
+    "status": "unknown",
+    "label": "Registration requirements not listed",
+    "url": null
+   },
+   "types": [
+    "outdoors",
+    "fitness"
+   ],
+   "sourceTags": [
+    "Fitness",
+    "Parks",
+    "Free",
+    "Adult (18+)",
+    "Program"
+   ],
+   "contact": null,
+   "sourceId": "cstx",
+   "sourceName": "City of College Station Calendar (DEMO)",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "id": "cstx:demo-yoga@1795874400000",
+   "start": "2026-11-28T14:00:00.000Z",
+   "end": "2026-11-28T15:00:00.000Z",
+   "endKnown": true,
+   "allDay": false,
+   "timeNote": null,
+   "sourceUrl": "https://events.timely.fun/yl7pe679/event/demo-yoga?instance_id=20261128080000",
+   "groupKey": "demo-saturday-yoga-in-the-park"
+  },
+  {
+   "seriesId": "cstx:demo-yoga",
+   "kind": "recurring",
+   "title": "[DEMO] Saturday Yoga in the Park",
+   "description": "Fictional weekly demo class. Starts in CDT (Oct 24) and continues after the DST change (Nov 1) at the same 8 AM wall-clock time. Nov 14 is cancelled via EXDATE.",
+   "summary": "Fictional weekly demo class. Starts in CDT (Oct 24) and continues after the DST change (Nov 1) at the same 8 AM wall-clock time. Nov 14 is cancelled via EXDATE.",
+   "location": {
+    "name": "Demo Park",
+    "address": "300 Example Ave, College Station, TX 77840",
+    "lat": 30.61,
+    "lng": -96.3
+   },
+   "cost": {
+    "status": "free",
+    "label": "Free",
+    "min": 0
+   },
+   "registration": {
+    "status": "unknown",
+    "label": "Registration requirements not listed",
+    "url": null
+   },
+   "types": [
+    "outdoors",
+    "fitness"
+   ],
+   "sourceTags": [
+    "Fitness",
+    "Parks",
+    "Free",
+    "Adult (18+)",
+    "Program"
+   ],
+   "contact": null,
+   "sourceId": "cstx",
+   "sourceName": "City of College Station Calendar (DEMO)",
+   "lastVerified": "2026-11-06T12:00:00.000Z",
+   "id": "cstx:demo-yoga@1796479200000",
+   "start": "2026-12-05T14:00:00.000Z",
+   "end": "2026-12-05T15:00:00.000Z",
+   "endKnown": true,
+   "allDay": false,
+   "timeNote": null,
+   "sourceUrl": "https://events.timely.fun/yl7pe679/event/demo-yoga?instance_id=20261205080000",
+   "groupKey": "demo-saturday-yoga-in-the-park"
+  }
+ ]
+}

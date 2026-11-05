@@ -1,0 +1,141 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//BCS Life Radar//DEMO fixture//EN
+X-WR-TIMEZONE:CST6CDT
+BEGIN:VEVENT
+UID:demo-ended-bird-walk
+SUMMARY:[DEMO] Early Bird Walk
+DTSTART;TZID=CST6CDT:20261106T070000
+DTEND;TZID=CST6CDT:20261106T080000
+CATEGORIES;LANGUAGE=en-US:Event
+X-TAGS;LANGUAGE=en-US:Nature,Parks,Free
+X-COST-TYPE:free
+LOCATION:Demo Nature Center @ 100 Example Rd\, College Station\, Texas\, 77845\, United States
+GEO:+30.568;-96.211
+URL:https://events.timely.fun/yl7pe679/event/demo-bird?instance_id=20261106070000
+DESCRIPTION:<p>Fictional demo entry that ends before the demo clock (10 AM) – it must be removed as expired.</p>
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:demo-lunch-concert
+SUMMARY:[DEMO] Lunchtime Park Concert
+DTSTART;TZID=CST6CDT:20261106T120000
+DTEND;TZID=CST6CDT:20261106T130000
+CATEGORIES;LANGUAGE=en-US:Event
+X-TAGS;LANGUAGE=en-US:Music,Parks,Free,Family Friendly
+X-COST-TYPE:free
+LOCATION:Demo Amphitheater @ 200 Example Dr\, College Station\, Texas\, 77840\, United States
+GEO:+30.6200;-96.3100
+URL:https://events.timely.fun/yl7pe679/event/demo-concert?instance_id=20261106120000
+DESCRIPTION:<p>Fictional demo concert. Bring a blanket. No registration required.</p>
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:demo-yoga
+SUMMARY:[DEMO] Saturday Yoga in the Park
+DTSTART;TZID=CST6CDT:20261024T080000
+DTEND;TZID=CST6CDT:20261024T090000
+RRULE:FREQ=WEEKLY;UNTIL=20261231T235959Z;BYDAY=SA;WKST=SU
+EXDATE;TZID=CST6CDT:20261114T080000
+CATEGORIES;LANGUAGE=en-US:Program
+X-TAGS;LANGUAGE=en-US:Fitness,Parks,Free,Adult (18+)
+X-COST-TYPE:free
+LOCATION:Demo Park @ 300 Example Ave\, College Station\, Texas\, 77840\, United States
+GEO:+30.6100;-96.3000
+URL:https://events.timely.fun/yl7pe679/event/demo-yoga?instance_id=20261024080000
+DESCRIPTION:<p>Fictional weekly demo class. Starts in CDT (Oct 24) and continues after the DST change (Nov 1) at the same 8 AM wall-clock time. Nov 14 is cancelled via EXDATE.</p>
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:demo-pottery
+SUMMARY:[DEMO] Beginner Pottery Workshop
+DTSTART;TZID=CST6CDT:20261107T140000
+DTEND;TZID=CST6CDT:20261107T170000
+CATEGORIES;LANGUAGE=en-US:Program
+X-TAGS;LANGUAGE=en-US:Registration Required,Paid,Adult (18+)
+X-COST:$15 Resident/$18 Non-Resident
+X-COST-TYPE:paid
+LOCATION:Demo Community Center @ 400 Example St\, College Station\, Texas\, 77840\, United States
+GEO:+30.6300;-96.3300
+URL:https://events.timely.fun/yl7pe679/event/demo-pottery?instance_id=20261107140000
+DESCRIPTION:<p>Fictional demo workshop.</p><a href='https://example.com/register'>Register here</a>
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:demo-trivia
+SUMMARY:[DEMO] Evening Trivia Night
+DTSTART;TZID=CST6CDT:20261106T190000
+CATEGORIES;LANGUAGE=en-US:Event
+X-TAGS;LANGUAGE=en-US:Games,Paid
+X-COST-TYPE:paid
+LOCATION:Demo Hall @ 500 Example Blvd\, Bryan\, Texas\, 77803\, United States
+URL:https://events.timely.fun/yl7pe679/event/demo-trivia?instance_id=20261106190000
+DESCRIPTION:<p>Fictional demo with no end time and no listed price.</p>
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:demo-council
+SUMMARY:[DEMO] City Council Meeting
+DTSTART;TZID=CST6CDT:20261106T150000
+DTEND;TZID=CST6CDT:20261106T170000
+CATEGORIES;LANGUAGE=en-US:Meeting
+X-TAGS;LANGUAGE=en-US:City Council
+X-COST-TYPE:free
+URL:https://events.timely.fun/yl7pe679/event/demo-council?instance_id=20261106150000
+DESCRIPTION:<p>Meetings are not leisure activities and must be excluded.</p>
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:demo-internal
+SUMMARY:[DEMO] Staff Training
+DTSTART;TZID=CST6CDT:20261106T130000
+DTEND;TZID=CST6CDT:20261106T140000
+CATEGORIES;LANGUAGE=en-US:Event
+X-COST-TYPE:free
+DESCRIPTION:<p>Internal entries must be excluded.</p>
+X-CUSTOM-FILTER:Type:Internal
+END:VEVENT
+BEGIN:VEVENT
+UID:demo-festival
+SUMMARY:[DEMO] Harvest Festival
+DTSTART;VALUE=DATE:20261108
+DTEND;VALUE=DATE:20261109
+CATEGORIES;LANGUAGE=en-US:Event
+X-TAGS;LANGUAGE=en-US:Community Event,Food/Drinks,Free,Family Friendly
+X-COST-TYPE:free
+LOCATION:Demo Square @ 600 Example Way\, Bryan\, Texas\, 77803\, United States
+GEO:+30.6740;-96.3700
+URL:https://events.timely.fun/yl7pe679/event/demo-festival?instance_id=20261108000000
+DESCRIPTION:<p>Fictional all-day demo festival.</p>
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:demo-stars
+SUMMARY:[DEMO] Stargazing Night
+DTSTART:20261108T010000Z
+DTEND:20261108T030000Z
+CATEGORIES;LANGUAGE=en-US:Event
+X-TAGS;LANGUAGE=en-US:Nature,Free,Family Friendly
+X-COST-TYPE:free
+LOCATION:Demo Nature Center @ 100 Example Rd\, College Station\, Texas\, 77845\, United States
+GEO:+30.568;-96.211
+URL:https://events.timely.fun/yl7pe679/event/demo-stars?instance_id=20261107190000
+DESCRIPTION:<p>Times given in UTC (01:00Z) – must display as Sat 7 PM CST.</p>
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:demo-bookclub
+SUMMARY:[DEMO] Library Book Club
+DTSTART;TZID=CST6CDT:20260714T180000
+DTEND;TZID=CST6CDT:20260714T190000
+RRULE:FREQ=MONTHLY;BYDAY=2TU
+CATEGORIES;LANGUAGE=en-US:Program
+X-TAGS;LANGUAGE=en-US:Books,Adult (18+),Free
+X-COST-TYPE:free
+LOCATION:Demo Library @ 700 Example Ln\, College Station\, Texas\, 77845\, United States
+GEO:+30.5900;-96.2900
+URL:https://events.timely.fun/yl7pe679/event/demo-books?instance_id=20260714180000
+DESCRIPTION:<p>Second Tuesday of every month (fictional).</p>
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+END:VCALENDAR
