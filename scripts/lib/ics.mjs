@@ -185,13 +185,19 @@ export function occurrences(ev, fromMs, toMs) {
   const dtendP = ev.DTEND?.[0];
   if (dtendP) {
     const endW = toChicagoWall(parseDateValue(dtendP.value, dtendP.params));
-    if (start.allDay) durationDays = civil(endW.y, endW.m, endW.d) - civil(start.y, start.m, start.d);
-    else durationMs = Date.UTC(endW.y, endW.m - 1, endW.d, endW.hh, endW.mm, endW.ss) - Date.UTC(start.y, start.m - 1, start.d, start.hh, start.mm, start.ss);
+    if (start.allDay) {
+      // RFC 5545 requires DTEND > DTSTART; a zero-length all-day event means one day.
+      durationDays = Math.max(1, civil(endW.y, endW.m, endW.d) - civil(start.y, start.m, start.d));
+    } else {
+      durationMs = Date.UTC(endW.y, endW.m - 1, endW.d, endW.hh, endW.mm, endW.ss) - Date.UTC(start.y, start.m - 1, start.d, start.hh, start.mm, start.ss);
+      if (durationMs <= 0) { durationMs = null; notes.push('DTEND not after DTSTART — end treated as not listed'); }
+    }
   } else if (start.allDay) {
     durationDays = 1; // RFC 5545: date-only DTSTART without DTEND lasts one day
   }
 
-  const key = (w) => `${w.y}${w.m}${w.d}T${w.hh}${w.mm}`;
+  const p2 = (n) => String(n).padStart(2, '0');
+  const key = (w) => `${w.y}-${p2(w.m)}-${p2(w.d)}T${p2(w.hh)}:${p2(w.mm)}`;
   const walls = new Map();
   const addWall = (w) => walls.set(key(w), w);
   addWall(start);
@@ -208,11 +214,17 @@ export function occurrences(ev, fromMs, toMs) {
   }
   const limitDay = Math.floor(toMs / 86400000) + 2;
   for (const rr of ev.RRULE || []) {
-    const { days, unsupported } = expandRRule(parseRRule(rr.value), start, limitDay);
+    const rule = parseRRule(rr.value);
+    const { days, unsupported } = expandRRule(rule, start, limitDay);
     if (unsupported) notes.push(unsupported);
+    // UNTIL given as a date-time is an inclusive bound on the instant (RFC 5545), not on the day.
+    let untilMs = null;
+    if (rule.UNTIL && /T/.test(rule.UNTIL)) { try { untilMs = wallToMs(parseDateValue(rule.UNTIL, {})); } catch { untilMs = null; } }
     for (const day of days) {
       const c = fromCivil(day);
-      addWall({ ...start, y: c.y, m: c.m, d: c.d });
+      const w = { ...start, y: c.y, m: c.m, d: c.d };
+      if (untilMs !== null && wallToMs(w) > untilMs) continue;
+      addWall(w);
     }
   }
   for (const ex of ev.EXDATE || []) {
