@@ -38,6 +38,14 @@ export function parseSitemap(xml) {
 
 const MONTHS = { january: 1, february: 2, march: 3, april: 4, may: 5, june: 6, july: 7, august: 8, september: 9, october: 10, november: 11, december: 12 };
 
+/** Sanity-check published coordinates: fix a dropped minus sign on longitude; drop anything outside the area. */
+export function fixCoords(lat, lng) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return [null, null];
+  if (lng > 0 && lat > 25 && lat < 37) lng = -lng; // "+96.37" published for a Bryan venue
+  if (lat < 29 || lat > 32 || lng < -98.5 || lng > -94.5) return [null, null]; // not in the Brazos Valley region
+  return [lat, lng];
+}
+
 /** Parse listing HTML into cards: [{url, title, categories:Set, lat, lng, dateHeading}] */
 export function parseListing(html) {
   const cards = [];
@@ -49,10 +57,9 @@ export function parseListing(html) {
     if (!url) continue;
     const title = decodeEntities((/data-dms-partner-name="([^"]*)"/.exec(block) || [])[1] || '');
     const cats = [...block.matchAll(/data-dms-category-name="([^"]*)"/g)].map((x) => decodeEntities(x[1]));
-    const lat = parseFloat((/data-marker-lat="([^"]*)"/.exec(block) || [])[1]);
-    const lng = parseFloat((/data-marker-lng="([^"]*)"/.exec(block) || [])[1]);
+    const [lat, lng] = fixCoords(parseFloat((/data-marker-lat="([^"]*)"/.exec(block) || [])[1]), parseFloat((/data-marker-lng="([^"]*)"/.exec(block) || [])[1]));
     const dateHeading = htmlToText((/card__date-heading"[^>]*>([\s\S]*?)<\/span>/.exec(block) || [])[1] || '');
-    cards.push({ url, title, categories: new Set(cats), lat: Number.isFinite(lat) ? lat : null, lng: Number.isFinite(lng) ? lng : null, dateHeading });
+    cards.push({ url, title, categories: new Set(cats), lat, lng, dateHeading });
   }
   const pageNums = [...html.matchAll(/[?&]page=(\d+)/g)].map((x) => +x[1]);
   return { cards, lastPage: pageNums.length ? Math.max(...pageNums) : 1 };
@@ -117,8 +124,7 @@ export function parseDetail(html, url) {
   const upcomingHtml = (/<ul class="[^"]*detail__dates[^"]*">([\s\S]*?)<\/ul>/.exec(html) || [])[1];
   const upcoming = upcomingHtml ? parseUpcoming(upcomingHtml, dates[0]) : [];
 
-  const lat = parseFloat((/data-marker-lat="([^"]*)"/.exec(html) || [])[1]);
-  const lng = parseFloat((/data-marker-lng="([^"]*)"/.exec(html) || [])[1]);
+  const [lat, lng] = fixCoords(parseFloat((/data-marker-lat="([^"]*)"/.exec(html) || [])[1]), parseFloat((/data-marker-lng="([^"]*)"/.exec(html) || [])[1]));
   const categories = [...new Set([...html.matchAll(/data-dms-category-name="([^"]*)"/g)].map((x) => decodeEntities(x[1])).filter(Boolean))];
 
   const addr = ld?.location?.address || {};
@@ -137,8 +143,8 @@ export function parseDetail(html, url) {
     websiteUrl: websiteMatch ? decodeEntities(websiteMatch[1]) : null,
     links: extractLinks(summaryHtml),
     location: { name: ld?.location?.name ? decodeEntities(ld.location.name) : null, address: address || null },
-    lat: Number.isFinite(lat) ? lat : null,
-    lng: Number.isFinite(lng) ? lng : null,
+    lat,
+    lng,
     categories,
   };
 }
@@ -180,7 +186,7 @@ export function itemsFromDetail(d, card, { fromMs, toMs, fetchedAt }) {
     const s = mk(day, t1);
     let e = t2 ? mk(day, t2) : null;
     if (e !== null && e <= s) e += 24 * 3600_000; // ends after midnight
-    return [s, e, { allDay: false, endKnown: e !== null }];
+    return [s, e, { allDay: false, endKnown: e !== null, timeNote: null }];
   };
 
   if (d.dates.length >= 2 && keyFromYmd(d.dates[0].y, d.dates[0].m, d.dates[0].d) !== keyFromYmd(d.dates[1].y, d.dates[1].m, d.dates[1].d)) {
@@ -188,7 +194,7 @@ export function itemsFromDetail(d, card, { fromMs, toMs, fetchedAt }) {
     const [s] = span(d.dates[0]);
     const last = d.dates[1];
     const end = startOfDay(keyFromYmd(last.y, last.m, last.d), 1);
-    const hoursText = t1 ? `Listed hours: ${d.times.map((t) => `${(t.hh % 12) || 12}:${String(t.mm).padStart(2, '0')} ${t.hh >= 12 ? 'PM' : 'AM'}`).join(' – ')}` : 'Daily hours not listed';
+    const hoursText = t1 ? `Listed hours: ${d.times.map(fmtTime).join(' – ')}` : 'Daily hours not listed';
     push(t1 ? startOfDay(keyFromYmd(d.dates[0].y, d.dates[0].m, d.dates[0].d)) : s, end, {
       kind: 'multi-day', allDay: true, endKnown: true,
       timeNote: `${hoursText} (as published; confirm with the venue)`,
@@ -196,15 +202,47 @@ export function itemsFromDetail(d, card, { fromMs, toMs, fetchedAt }) {
     });
     return items;
   }
-  const days = d.upcoming.length >= 2 ? d.upcoming : [d.dates[0]];
-  const kind = d.upcoming.length >= 2 ? 'recurring' : 'one-time';
+  // The headline date is sometimes missing from the site's own "Upcoming Dates" list, so union them.
+  const key = (x) => keyFromYmd(x.y, x.m, x.d);
+  const byKey = new Map([[key(d.dates[0]), d.dates[0]], ...d.upcoming.map((x) => [key(x), x])]);
+  const days = [...byKey.values()].sort((a, b) => key(a).localeCompare(key(b)));
+
+  if (days.length >= LONG_RUN_MIN_DATES && isDenseRun(days)) {
+    // A long, dense date list (e.g. an exhibit open every weekday for months) is one ongoing thing, not
+    // dozens of separate events. Publish one multi-day item with the listed hours and the open days.
+    const first = days[0], last = days[days.length - 1];
+    const hoursText = t1 ? `Listed hours: ${d.times.map(fmtTime).join(' – ')}` : 'Daily hours not listed';
+    push(startOfDay(key(first)), startOfDay(key(last), 1), {
+      kind: 'multi-day', allDay: true, endKnown: true,
+      timeNote: `Open ${openDaysText(days)} through ${last.m}/${last.d}. ${hoursText} (as published; confirm with the venue)`,
+      runStart: key(first), runEnd: key(last), occurrenceCount: days.length,
+    });
+    return items;
+  }
+  const kind = days.length >= 2 ? 'recurring' : 'one-time';
   for (const day of days) {
     const [s, e, extra] = span(day);
-    const isFirst = day.y === d.dates[0].y && day.m === d.dates[0].m && day.d === d.dates[0].d;
+    const isFirst = key(day) === key(d.dates[0]);
     if (kind === 'recurring' && !isFirst && t1) extra.timeNote = 'Time copied from the series listing — confirm for this date';
     push(s, e, { kind, ...extra });
   }
   return items;
+}
+
+const LONG_RUN_MIN_DATES = 20;
+const fmtTime = (t) => `${(t.hh % 12) || 12}:${String(t.mm).padStart(2, '0')} ${t.hh >= 12 ? 'PM' : 'AM'}`;
+const civilDay = (x) => Math.floor(Date.UTC(x.y, x.m - 1, x.d) / 86400000);
+/** Dense = on average at least one listed date every two days across the run. */
+function isDenseRun(days) {
+  const span = civilDay(days[days.length - 1]) - civilDay(days[0]) + 1;
+  return span <= days.length * 2;
+}
+const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+function openDaysText(days) {
+  const dows = new Set(days.map((x) => new Date(Date.UTC(x.y, x.m - 1, x.d)).getUTCDay()));
+  if (dows.size === 7) return 'daily';
+  if (dows.size === 5 && !dows.has(0) && !dows.has(6)) return 'weekdays';
+  return [...dows].sort().map((n) => DOW[n]).join('/');
 }
 
 /** Discover event URLs: sitemap first (complete, one request), listing pages as a fallback. */
@@ -242,7 +280,8 @@ async function discover({ fetchText, maxListingPages, log, stats }) {
   return cardsByUrl;
 }
 
-export async function fetchSource({ fetchText, mapLimit, fromMs, toMs, concurrency = 3, maxListingPages = 8, maxDetailPages = 400, log = () => {} }) {
+// This host serialises requests: 3 concurrent fetches tripled latency and caused timeouts, so 1 at a time.
+export async function fetchSource({ fetchText, mapLimit, fromMs, toMs, concurrency = 1, maxListingPages = 8, maxDetailPages = 400, log = () => {} }) {
   const fetchedAt = new Date().toISOString();
   const stats = { discovery: null, sitemapUrls: 0, detailPages: 0, failedPages: 0, skipped: {}, notes: [] };
   const cardsByUrl = await discover({ fetchText, maxListingPages, log, stats });
@@ -261,7 +300,9 @@ export async function fetchSource({ fetchText, mapLimit, fromMs, toMs, concurren
     stats.detailPages++;
     const d = r.value;
     if (d.skip) { stats.skipped[d.skip] = (stats.skipped[d.skip] || 0) + 1; return; }
-    items.push(...itemsFromDetail(d, card, { fromMs, toMs, fetchedAt }));
+    const produced = itemsFromDetail(d, card, { fromMs, toMs, fetchedAt });
+    if (!produced.length) { stats.skipped['no dates in window (ended or far future)'] = (stats.skipped['no dates in window (ended or far future)'] || 0) + 1; return; }
+    items.push(...produced);
   });
   // If most pages failed, treat the refresh as failed so the last good data is kept and the failure is shown.
   if (cards.length && stats.failedPages > cards.length / 2) {

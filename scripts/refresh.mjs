@@ -109,7 +109,7 @@ export async function refresh({
   const toMs = startOfDay(today, days + 1);
   const ctx = {
     fetchText, mapLimit, fromMs, toMs, log,
-    concurrency: +(process.env.CONCURRENCY || 3),
+    concurrency: +(process.env.CONCURRENCY || 1), // per-source concurrency; the gate still spaces starts 1 s apart
     maxListingPages: +(process.env.BRYAN_PAGES || 8),
     maxDetailPages: +(process.env.BRYAN_DETAILS || 400),
   };

@@ -74,18 +74,18 @@ Recommended: **GitHub Pages + GitHub Actions**.
 
 1. Push this folder to a GitHub repository (public repos get free Actions minutes and Pages).
 2. In the repo: *Settings → Pages → Source: GitHub Actions*.
-3. The workflow refreshes data twice a day, commits `public/data/events.json` (so the last good copy is always kept), and deploys `public/`. Run it any time from the *Actions* tab.
+3. The workflow refreshes data twice a day and deploys `public/`. The "last good copy" is the live site's own `data/events.json` (read back at the start of each run), so nothing is committed back to the repository. A push that only changes the site or docs reuses the live data instead of crawling the sources again. Run a refresh any time from the *Actions* tab ("Run workflow").
 
 | Item | Cost |
 | --- | --- |
 | Hosting (GitHub Pages, static files) | $0 |
-| Scheduled refresh (GitHub Actions, ~10 min/day) | $0 for public repos; a private repo uses ~300 of the 2,000 free minutes/month on the Free plan |
+| Scheduled refresh (GitHub Actions, ~10–15 min/day) | $0 for public repos; a private repo would use ~450 of the 2,000 free minutes/month on the Free plan |
 | Data sources | $0 — public pages and a public calendar feed; no API keys |
 | Paid APIs / AI / database / accounts | None |
 | Custom domain (optional) | ~$10–15/year |
 
 Alternatives with the same $0 profile: Netlify or Cloudflare Pages for hosting with the refresh in GitHub Actions, or any machine with `cron` running `npm run refresh` and serving `public/`.
 
-**Maintenance to expect**: the Destination Bryan adapter reads HTML, so a site redesign can break it. The refresh then reports “layout may have changed”, keeps the last good data, and the site shows the failure banner — fix the selectors in `scripts/sources/destinationBryan.mjs`. Place hours are re-checked each refresh; if a city page changes wording, the card warns “hours may have changed” and `data/places.json` should be updated by hand. Holiday closure dates in `data/places.json` need a yearly update.
+**Maintenance to expect**: the Destination Bryan adapter reads HTML (discovered through the site's public event sitemap), so a site redesign can break it. The refresh then reports “layout may have changed”, keeps the last good data, and the site shows the failure banner — fix the selectors in `scripts/sources/destinationBryan.mjs`. Place hours are re-checked each refresh; if a city page changes wording, the card warns “hours may have changed” and `data/places.json` should be updated by hand. Holiday closure dates in `data/places.json` need a yearly update.
 
 See [SOURCES.md](SOURCES.md) for the source-by-source details and [docs/VERIFICATION.md](docs/VERIFICATION.md) for what was tested.

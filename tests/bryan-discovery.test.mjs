@@ -90,3 +90,44 @@ test('mapLimit preserves order and never exceeds the limit', async () => {
   assert.equal(max, 2);
   assert.deepEqual(out.map((r) => (r.ok ? r.value : `err:${r.error.message}`)), [10, 20, 30, 'err:boom', 50, 60, 70]);
 });
+
+import { fixCoords, itemsFromDetail } from '../scripts/sources/destinationBryan.mjs';
+
+test('coordinates: a dropped minus sign on longitude is repaired; out-of-area points are dropped', () => {
+  assert.deepEqual(fixCoords(30.6797, 96.3723), [30.6797, -96.3723]);
+  assert.deepEqual(fixCoords(30.6797, -96.3723), [30.6797, -96.3723]);
+  assert.deepEqual(fixCoords(0, 0), [null, null]);
+  assert.deepEqual(fixCoords(40.7, -74.0), [null, null]);
+  assert.deepEqual(fixCoords(NaN, -96), [null, null]);
+});
+
+const baseDetail = (over) => ({
+  url: 'https://www.destinationbryan.com/events/x/', title: 'X', description: '', dates: [{ y: 2027, m: 2, d: 19 }],
+  times: [{ hh: 19, mm: 0 }, { hh: 21, mm: 30 }], upcoming: [], admission: 'Free', ticketUrl: null, websiteUrl: null, links: [],
+  location: { name: 'V', address: '1 Main St, Bryan, TX 77803' }, lat: 30.6, lng: -96.3, categories: [], ...over,
+});
+const win = { fromMs: startOfDay('2026-11-06'), toMs: startOfDay('2027-06-30'), fetchedAt: 'x' };
+
+test('headline date is kept even when the site omits it from its own Upcoming Dates list', () => {
+  const its = itemsFromDetail(baseDetail({ upcoming: [{ y: 2027, m: 2, d: 20 }, { y: 2027, m: 2, d: 21 }] }), null, win);
+  assert.deepEqual(its.map((i) => i.start.slice(0, 10)), ['2027-02-20', '2027-02-21', '2027-02-22']); // 7 PM CST = next day 01:00Z
+  assert.equal(its[0].kind, 'recurring');
+  assert.equal(its[0].timeNote, null);
+});
+
+test('a dense multi-month date list (exhibit open every weekday) becomes one ongoing item', () => {
+  const upcoming = [];
+  for (let d = new Date(Date.UTC(2026, 10, 5)); d < Date.UTC(2027, 4, 1); d.setUTCDate(d.getUTCDate() + 1)) {
+    if (d.getUTCDay() >= 1 && d.getUTCDay() <= 5) upcoming.push({ y: d.getUTCFullYear(), m: d.getUTCMonth() + 1, d: d.getUTCDate() });
+  }
+  const its = itemsFromDetail(baseDetail({ dates: [{ y: 2026, m: 11, d: 5 }], times: [{ hh: 8, mm: 0 }, { hh: 17, mm: 0 }], upcoming }), null, win);
+  assert.equal(its.length, 1);
+  assert.equal(its[0].kind, 'multi-day');
+  assert.equal(its[0].runStart, '2026-11-05');
+  assert.equal(its[0].runEnd, '2027-04-30');
+  assert.match(its[0].timeNote, /Open weekdays through 4\/30\. Listed hours: 8:00 AM – 5:00 PM/);
+  // A weekly series is NOT collapsed.
+  const weekly = Array.from({ length: 25 }, (_, i) => { const d = new Date(Date.UTC(2026, 10, 11 + 7 * i)); return { y: d.getUTCFullYear(), m: d.getUTCMonth() + 1, d: d.getUTCDate() }; });
+  const w = itemsFromDetail(baseDetail({ dates: [weekly[0]], upcoming: weekly }), null, win);
+  assert.ok(w.length >= 20 && w.every((i) => i.kind === 'recurring'));
+});
