@@ -130,7 +130,7 @@ test('cost variants: number, "Free", HTML, bare leading number, null', () => {
   assert.deepEqual(item('Physics Demos').cost, { status: 'free', label: 'Free', min: 0 });
   const momentum = item('‘Momentum’');
   assert.equal(momentum.cost.status, 'paid');
-  assert.equal(momentum.cost.min, 7);
+  assert.equal(momentum.cost.min, 11.5); // the typical adult price; the student price is audience-specific
   assert.equal(momentum.cost.label, '$11.50; $7 for students at the MSC Box Office.');
   assert.deepEqual(item('OPAS presents A Beautiful Noise').cost, { status: 'unknown', label: 'Cost not listed', min: null });
   // Strings seen in the feeds on 2026-11-05.
@@ -139,7 +139,7 @@ test('cost variants: number, "Free", HTML, bare leading number, null', () => {
   assert.deepEqual(costFor(null), { status: 'unknown', label: 'Cost not listed', min: null });
   assert.deepEqual(costFor(''), { status: 'unknown', label: 'Cost not listed', min: null });
   assert.deepEqual(costFor('60-$66'), { status: 'paid', label: '$60-$66', min: 60 });
-  assert.deepEqual(costFor('11.50; $6 for students at the MSC Box Office'), { status: 'paid', label: '$11.50; $6 for students at the MSC Box Office', min: 6 });
+  assert.deepEqual(costFor('11.50; $6 for students at the MSC Box Office'), { status: 'paid', label: '$11.50; $6 for students at the MSC Box Office', min: 11.5 });
   assert.deepEqual(costFor('<p>$35 per couple</p>'), { status: 'paid', label: '$35 per couple', min: 35 });
   assert.equal(costFor('<p>\n  This event has been cancelled\n</p>').status, 'unknown');
   assert.equal(costFor('25 per person').status, 'unknown', 'a bare number without any $ is not turned into a price');

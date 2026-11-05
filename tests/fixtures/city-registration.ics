@@ -1,0 +1,164 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-////NONSGML kigkonsult.se iCalcreator 2.26.9//
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:City of College Station Calendar
+X-FROM-URL:https://events.timely.fun/yl7pe679
+X-WR-TIMEZONE:CST6CDT
+BEGIN:VTIMEZONE
+TZID:CST6CDT
+X-LIC-LOCATION:CST6CDT
+BEGIN:STANDARD
+DTSTART:20261101T020000
+TZOFFSETFROM:-0500
+TZOFFSETTO:-0600
+RDATE:20271107T020000
+TZNAME:CST
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:20270314T020000
+TZOFFSETFROM:-0600
+TZOFFSETTO:-0500
+RDATE:20280312T020000
+TZNAME:CDT
+END:DAYLIGHT
+END:VTIMEZONE
+X-COMMENT:Trimmed copy of https://events.timely.fun/api/calendars/54735353/export?format=ics as served on 2026-11-05 (three VEVENTs kept verbatim)
+BEGIN:VEVENT
+UID:0392b3ed-5d38-4854-9bbd-de1ff8d83694-time.ly
+DTSTAMP:20261105T053104Z
+CATEGORIES;LANGUAGE=en-US:Event,Program
+CONTACT:Neighborhood Services
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/Seminar_Supp
+ ers_Q9jI.jpg' /></div><p>On the 4th Tuesday of every month\, Neighborhood 
+ Services invites members of the Community to hear from those working with 
+ various departments across the City. This serves as an opportunity for mem
+ bers of the community to have conversations and learn about City operation
+ s – while promoting City operations and services. Previous presentations h
+ ave included an update on capital projects\, the City’s budget\, emergency
+  management programs\, and various others.</p>\n<p>RSVP’s to each Seminar 
+ Supper will open on the first day of each month and close the Wednesday be
+ fore the Supper takes place. Topics can be found via the Neighborhood News
+ letter\, which you can to subscribe to <a href='https://visitor.r20.consta
+ ntcontact.com/manage/optin?v=001bSIgoTcShKi4sAL4mA8wuZOkVBpj1cYHOC-peGrls8
+ uXiX7HPIYgxk01tELYvUZrf6ggNflpFlfjGHijAb2cBCwKz59GlOd2H5wcDR39GYQ%3D' rel=
+ 'nofollow noreferrer noopener' target='_blank'>here</a>\, or on the City o
+ f College Station’s Calendar.</p>\n<p><span style='font-size:12pt\;'><a hr
+ ef='https://airtable.com/appXrenPOgMpfJqUH/shriHL0sj7LEiakBa' rel='nofollo
+ w noreferrer noopener' target='_blank'><span style='text-decoration:underl
+ ine\;'><strong>Register for Seminar Supper</strong></span></a></span><br /
+ ><br />If you would like to make suggestions for topic ideas for future Se
+ minar Suppers\, please let us know at <a href='mailto:NeighborhoodServices
+ @cstx.gov'>NeighborhoodServices@cstx.gov</a>.</p>
+DTSTART;TZID=CST6CDT:20261117T180000
+DTEND;TZID=CST6CDT:20261117T200000
+GEO:+30.621293;-96.326046
+LOCATION:College Station City Hall @ 1101 Texas Avenue\, College Station\, 
+ Texas\, 77840\, United States
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Seminar Supper
+URL:https://events.timely.fun/yl7pe679/event/seminar-supper-10?instance_id=
+ 20261117180000
+X-ORIGINAL-URL:
+X-COST-TYPE:free
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/Seminar_Suppers_Q9jI.jpg
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Food/Drinks,Lecture
+X-CUSTOM-FILTER:Room:Bush 4141 Community Room
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:993d1b9c-7f68-4e3a-b45d-1d85a7686f53-time.ly
+DTSTAMP:20261105T053104Z
+CATEGORIES;LANGUAGE=en-US:Event
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/Fall-Explori
+ ng-History-Luncheons--Web_Facebook-Post_fRuo.jpg' /></div><p>Take a break 
+ for lunch and explore the community’s past at the Exploring History Lunche
+ on\, presented in partnership with the College Station Historic Preservati
+ on Committee. November’s topic is “College Station: A City Founded with Pa
+ rks\,” presented by Steve Beachy\, former College Station Parks and Recrea
+ tion director\, and Dr. John Crompton\, professor in the Department of Rec
+ reation\, Park and Tourism Sciences at Texas A&M University.</p>\n<p>The l
+ uncheon will be held Wednesday\, Nov. 18\, from 11:30 a.m.–1 p.m. at the L
+ arry J. Ringer Library. Attendance is free\, with lunch available for $10 
+ for residents and $12 for non-residents. Lunch reservations are required b
+ y Friday\, Nov. 13. A limited number of meals will be available at the doo
+ r for $12.</p>\n<div class='btn' style='margin:0px\;padding:15px\;width:30
+ 0px\;background-color:#223d92\;text-align:center\;border-radius:5px\;color
+ :#ffffff\;'><a style='background-color:transparent\;line-height:inherit\;c
+ olor:#ffffff\;text-decoration-line:none\;font-weight:bold\;' href='https:/
+ /txcollegestationweb.myvscloud.com/webtrac/web/search.html?Action=Start&Su
+ bAction=&csrftoken=&category=EVENTS&=&primarycode=PKS-17' rel='nofollow no
+ referrer noopener' target='_blank'>Reserve Your Lunch</a></div>\n<p>For mo
+ re information\, contact the Parks and Recreation Administrative Office at
+  979.764.3486.</p>
+DTSTART;TZID=CST6CDT:20261118T113000
+DTEND;TZID=CST6CDT:20261118T130000
+GEO:+30.59007;-96.314508
+LOCATION:Larry J. Ringer Library @ 1818 Harvey Mitchell Parkway South\, Col
+ lege Station\, Texas\, 77845\, United States
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Exploring History Luncheon: “College Station: A City Founded with P
+ arks”
+URL:https://events.timely.fun/yl7pe679/event/exploring-history-luncheon-col
+ lege-station-a-city-founded-with-parks?instance_id=20261118113000
+X-ORIGINAL-URL:
+X-COST-TYPE:free
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/Fall-Exploring-History-Luncheons--Web_Facebook-Post_fRuo.jpg
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:History,Lecture,Food/Drinks,Paid,Free,Family Friendly
+ ,Special Event,Registration Required
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:28411124-8f46-45c1-9f8d-e0585491b1f0-time.ly
+DTSTAMP:20261105T053104Z
+CATEGORIES;LANGUAGE=en-US:Program
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/Facebook%20E
+ vent%20Images%207_KE6W.png' /></div><p class='isSelectedEnd'>Discover how 
+ engineers use nature to design amazing things through hands-on exploration
+  and thinking activities. Designed for ages 7–12\, the class will be held 
+ Sunday\, Nov. 15\, from 2:30-4:30 p.m. at the Gary Halter Nature Center.</
+ p>\n<p>Participants will explore bio-inspired engineering with experts fro
+ m Texas A&M and nature educators while learning how ideas from the natural
+  world can inspire engineering solutions. Dress for the outdoors\, wear cl
+ osed-toe shoes and bring water.</p>\n<p>The cost is $5 for residents and $
+ 6 for non-residents. Registration is required.</p>\n<div class='btn' style
+ ='margin:0px\;padding:15px\;width:300px\;background-color:#223d92\;text-al
+ ign:center\;border-radius:5px\;color:#ffffff\;'><a style='background-color
+ :transparent\;line-height:inherit\;color:#ffffff\;text-decoration-line:non
+ e\;font-weight:bold\;' href='https://txcollegestationweb.myvscloud.com/web
+ trac/web/search.html?Action=Start&SubAction=&csrftoken=&category=YOUTH&=&p
+ rimarycode=LCN-88' rel='nofollow noreferrer noopener' target='_blank'>Rese
+ rve Your Spot</a></div>\n<p>For more information\, contact the Gary Halter
+  Nature Center at 979.764.6216.</p>
+DTSTART;TZID=CST6CDT:20261115T143000
+DTEND;TZID=CST6CDT:20261115T163000
+GEO:+30.568073;-96.211266
+LOCATION:Gary Halter Nature Center @ 13600 Rock Prairie Road\, College Stat
+ ion\, Texas\, 77845\, United States
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Walk Like an Engineer
+URL:https://events.timely.fun/yl7pe679/event/walk-like-an-engineer-5?instan
+ ce_id=20261115143000
+X-ORIGINAL-URL:
+X-COST:$5 Resident/$6 Non-Resident
+X-COST-TYPE:paid
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/Facebook%20Event%20Images%207_KE6W.png
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Nature,Parks,Registration Required,Youth,Paid
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+END:VCALENDAR

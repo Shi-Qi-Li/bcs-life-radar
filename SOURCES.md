@@ -9,9 +9,11 @@ Verified on **2026-11-05** by inspecting each page and following links to indivi
 - **Update method:** the calendar's public **iCalendar (ICS) export** — the same feed its *Subscribe* button offers:
   `https://events.timely.fun/api/calendars/54735353/export?format=ics`
   One request per refresh; ~700 KB; ~340 entries with title, description, start/end with time zone, recurrence (RRULE/RDATE/EXDATE), location + coordinates, cost type/amount, tags (incl. "Registration Required"), and a per-date link.
-- What we keep: public activities. We leave out entries tagged Internal, Meeting/Notice categories, City Council/Committee, closures, and cancelled entries (on 2026-11-05: 57 meeting/closure/notice, 22 cancelled, 15 internal).
+- What we keep: public activities. We leave out entries tagged Internal, Meeting/Notice categories, City Council/Committee, closures, cancelled entries, and civic-education/planning programmes (Seminar Supper, town halls, public hearings, budget workshops, enrolment periods), counted as 'civic/informational' in the refresh stats (on 2026-11-05: 57 meeting/closure/notice, 22 cancelled, 15 internal, 11 civic).
 - Known limitations:
-  - The feed marks most entries `free` by default. When no "Free" tag backs it up, the card says "Free (marked free in City calendar)". If tags say both Free and Paid, the card says the cost is unclear.
+  - The feed marks most entries `free` by default. When no "Free" tag backs it up, the card says "Free (marked free in City calendar)". If tags say both Free and Paid, or Paid without an amount, the card shows the description's own price sentence labelled "(per description)"; it says "unclear" only when the description prices nothing.
+  - Department and audience tags (Parks, Program, Adult (18+), Senior (55+), Family Friendly, …) only weakly influence the activity type; descriptive tags (Nature, Fitness, Music, Games, Lecture, …) count fully.
+  - Entries without an end time are exported with a placeholder end of 23:59:59 (`X-INSTANT-EVENT`); they are published with "end time not listed" rather than an invented duration. Sold-out entries (`STATUS:SOLD_OUT`) stay listed with their registration line marked sold out.
   - The "Registration Required" tag sometimes applies to part of an event (e.g. a costume contest at a free movie night); the description on the card shows the details.
   - Timely event links open a JavaScript calendar page.
   - Recurrence types beyond DAILY/WEEKLY/MONTHLY (with BYDAY/BYMONTHDAY) are reported in the refresh log and not guessed. None were present on 2026-11-05.
@@ -29,6 +31,11 @@ Verified on **2026-11-05** by inspecting each page and following links to indivi
   - Two venues are published with a positive longitude (a dropped minus sign); coordinates are sign-corrected and anything outside the Brazos Valley is dropped so directions fall back to the address.
   - Some multi-day listings publish odd hours (e.g. an exhibit at "7:00 AM – 11:00 AM"). We show them "as published; confirm with the venue".
   - Most events sit in the site's catch-all "Arts & Culture" category, so that category is only a weak hint; types come mainly from titles and descriptions.
+  - **Cost**: the budget filter uses the typical adult/general price in the admission text (e.g. "$12 adults | $5 kids" filters as $12; "Free to watch | $20 to participate" filters as free); the full text is always shown. When the admission line is empty but the description prices the activity, the card says "Price in description: …".
+  - **Registration**: sentences about performer, vendor or competitor sign-ups are not treated as attendee registration; RSVP windows and "register by" wording count as required, with the page's register/RSVP link attached.
+  - A listed start of 12:00 AM with an afternoon end is treated as "start not listed" with a note; single-day spans over 14 hours get a note; when the description says "every Thursday" but the listed dates are Wednesdays, the card says so.
+  - When the page has no venue name, it is taken from the title's "at <Venue>" or the description's "located at …"; if the title names a different venue than the listed address, the card says so.
+  - Boilerplate lines ("Click here…", "Sponsored by…", weather notices) are removed from descriptions.
   - An HTML redesign will break this adapter. The refresh then fails loudly, keeps the last good data, and the site shows a banner.
 
 ## 3. Regularly open places (hand-curated)

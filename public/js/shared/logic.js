@@ -22,6 +22,63 @@ export function isExpired(item, now) {
 
 export const isHappeningNow = (item, now) => item.kind !== 'place' && ms(item.start) <= now && effectiveEnd(item) > now;
 
+/** True when a timed event starts after `now` and no later than `now + withinMs` (default 3 h). */
+export function startsWithin(item, now, withinMs = 3 * HOUR) {
+  if (item.kind === 'place' || item.kind === 'multi-day' || item.allDay || !item.start) return false;
+  const s = ms(item.start);
+  return s > now && s <= now + withinMs;
+}
+
+/** "1 result" / "2 results"; pass an irregular plural as the third argument. */
+export const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
+
+/** "45 min", "2 h", "2 h 30 min" for a duration in ms (rounded to minutes). */
+export function durationLabel(msDur) {
+  const mins = Math.max(0, Math.round(msDur / 60_000));
+  const h = Math.floor(mins / 60), m = mins % 60;
+  if (!h) return `${m} min`;
+  return m ? `${h} h ${m} min` : `${h} h`;
+}
+
+/**
+ * Items for a "Right now" strip: happening now, starting within `withinMs`, or places open now.
+ * Returns [{ match, status: 'now'|'soon'|'open', label }] — at most `max`, in that order. Empty when nothing qualifies.
+ */
+export function nowItems(matches, now, { withinMs = 3 * HOUR, max = 6 } = {}) {
+  const out = [];
+  for (const m of matches) {
+    const it = m.item;
+    if (it.kind === 'place') {
+      const w = m.window;
+      if (w && w.start <= now && w.end > now) out.push({ match: m, status: 'open', label: `Open now · until ${formatTime(w.end)}`, order: 2, t: w.end });
+    } else if (it.kind !== 'multi-day' && isHappeningNow(it, now)) {
+      out.push({ match: m, status: 'now', label: it.end ? `Happening now · until ${formatTime(ms(it.end))}` : 'Happening now', order: 0, t: effectiveEnd(it) });
+    } else if (startsWithin(it, now, withinMs)) {
+      out.push({ match: m, status: 'soon', label: `Starts in ${durationLabel(ms(it.start) - now)}`, order: 1, t: ms(it.start) });
+    }
+  }
+  out.sort((a, b) => a.order - b.order || a.t - b.t);
+  return out.slice(0, max).map(({ match, status, label }) => ({ match, status, label }));
+}
+
+/**
+ * Collapse recurring items that share a seriesId into one match (the earliest, i.e. the next date),
+ * carrying the later ones in `otherDates`. Input order (sorted by start) is kept.
+ */
+export function groupSeries(matches) {
+  const out = [], bySeries = new Map();
+  for (const m of matches) {
+    const sid = m.item.kind === 'recurring' ? m.item.seriesId : null;
+    if (!sid) { out.push(m); continue; }
+    const g = bySeries.get(sid);
+    if (g) { g.otherDates.push(m); continue; }
+    const first = { ...m, otherDates: [] };
+    bySeries.set(sid, first);
+    out.push(first);
+  }
+  return out;
+}
+
 /** Date range [from, to) for a "when" choice, clipped to start at now. */
 export function rangeFor(when, now, date) {
   const today = dayKey(now);
@@ -201,10 +258,10 @@ export function pickRecommendations(matches, ctx, f, max = 5) {
   const likedTypes = prefs.likedTypes || new Map();
   const dislikedTypes = prefs.dislikedTypes || new Map();
   const been = prefs.been || new Set();
+  const savedIds = prefs.saved || new Set(); // so an item's own save does not count as "similar to things you saved"
 
   const scored = matches.map((m) => {
     const it = m.item;
-    const reasons = [];
     let s = 1;
     const start = m.window?.start ?? null;
     if (it.kind === 'place' || it.kind === 'multi-day') s += 0.4;
@@ -214,7 +271,9 @@ export function pickRecommendations(matches, ctx, f, max = 5) {
       s += h <= 24 ? 1.5 : h <= 72 ? 0.8 : 0.3;
     }
     s += 0.25 * ((it.cost.status !== 'unknown') + (it.registration.status !== 'unknown') + (it.location?.lat != null) + !!it.endKnown);
-    const lk = it.types.reduce((a, t) => a + (likedTypes.get(t) || 0), 0);
+    if (it.kind === 'place' && !m.window) s -= 0.3; // "Hours not listed" is a weak pick; prefer another candidate when there is one
+    const self = savedIds.has(it.id) ? 1 : 0;
+    const lk = it.types.reduce((a, t) => a + Math.max(0, (likedTypes.get(t) || 0) - self), 0);
     const dk = it.types.reduce((a, t) => a + (dislikedTypes.get(t) || 0), 0);
     if (lk) { s += Math.min(1, 0.4 * lk); }
     if (dk) { s -= Math.min(1, 0.4 * dk); }
@@ -251,7 +310,8 @@ export function pickRecommendations(matches, ctx, f, max = 5) {
 
 export function buildReason(m, { now, f = DEFAULT_FILTERS, lk = 0, varietyType = null }) {
   const it = m.item;
-  const r = [whenPhrase(m, now)];
+  const when = whenPhrase(m, now);
+  const r = when === 'Hours not listed' ? [] : [when];
   if (it.cost.status === 'free') r.push('Free');
   else if (f.budget !== 'any' && f.budget !== 'free' && it.cost.min !== null) r.push(`Fits your $${f.budget} budget`);
   if (m.distance != null) r.push(`≈${m.distance < 10 ? m.distance.toFixed(1) : Math.round(m.distance)} km away (straight line)`);
@@ -265,5 +325,13 @@ export function buildReason(m, { now, f = DEFAULT_FILTERS, lk = 0, varietyType =
   if (lk > 0) r.push('Similar to things you saved or liked');
   if (varietyType) r.push(`Adds variety: ${TYPE_LABEL[varietyType]}`);
   if (it.kind === 'recurring') r.push('Repeats — other dates available');
+  if (r.length <= 1) {
+    // Never a bare when-phrase (or nothing): add a factual signal from the listing itself.
+    if (it.types[0]) r.push(TYPE_LABEL[it.types[0]] || it.types[0]);
+    const listed = [it.cost.status !== 'unknown' && 'cost', it.registration.status !== 'unknown' && 'registration', (it.location?.name || it.location?.address) && 'location'].filter(Boolean);
+    if (listed.length >= 2) r.push(`${listed.join(', ').replace(/, ([^,]*)$/, ' and $1')} listed`);
+    else if (it.kind === 'place') r.push('Regularly open place — check hours on the source');
+    if (!r.length) r.push(`Listed by ${it.sourceName || 'the source'}`);
+  }
   return r.slice(0, 4).join(' · ');
 }

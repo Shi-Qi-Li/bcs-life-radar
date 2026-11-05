@@ -5,7 +5,7 @@ Find things to do in Bryan–College Station, Texas, that fit your **time, budge
 - Opens straight to the **next 7 days**, with **3–5 varied top picks** (each says *why* it was picked) and a **Browse all** list.
 - Filters: date (today / tomorrow / weekend / next 7 days / pick a date), time of day, time you have, budget, activity type, mood, getting there (walk / bike / bus / drive), kind (one-time, recurring, multi-day, regularly-open places), search.
 - Every card: name, short description, date & time (Central Time), location, cost, registration, recommendation reason, original source link, last-updated time.
-- **Save**, **Not interested**, **Been there**, and “**Did you go?**” feedback after an event ends — stored only in the browser.
+- **Save**, **Not interested**, **Been there**, **Share**, and “**Did you go?**” feedback after an event ends — stored only in the browser.
 - **Directions** (Apple Maps / Google Maps, in your chosen travel mode) and **Add to calendar** (.ics or Google Calendar).
 - Works on phones, iPads and desktops. No accounts, no tracking, no paid APIs.
 
@@ -39,7 +39,9 @@ npm run test:ui
 
 `npm run test:ui` uses Playwright with Chromium. If you don't have it: `npm i -D playwright && npx playwright install chromium`.
 
-Useful URL options: `?demo=1` (demo data), `?now=2026-11-06T20:00:00Z` (simulate a different time; a banner says so).
+Useful URL options: `?demo=1` (demo data), `?now=2026-11-06T20:00:00Z` (simulate a different time; a banner says so). Links are shareable: `#/item/<id>` opens one activity, and `#/?when=weekend&budget=free&mood=social` opens a filtered view (`every=1` shows every date of repeating events).
+
+On the site: the **Right now** strip lists what is happening now, starting within 3 hours or open now; the **day pills** show how many results each of the next 7 days has; **Browse all** groups repeating events under their next date (choose "Everything — show every date" to expand them) and offers a compact **List** view on phones. The site is installable (Add to Home Screen) and keeps the last data available offline.
 
 ## How it works
 
@@ -50,7 +52,7 @@ public/ (static site) ──► loads events.json ──► filters, picks & ren
 
 | Path | What it is |
 | --- | --- |
-| `public/` | The whole website (HTML, CSS, plain ES modules). No build step. |
+| `public/` | The whole website (HTML, CSS, plain ES modules, web app manifest and service worker). No build step. |
 | `public/js/shared/` | Logic shared by the site, the refresh script and the tests: Central-time helpers, taxonomy, filtering/picks, calendar & map links. |
 | `scripts/sources/` | One adapter per source (`cstx.mjs`, `destinationBryan.mjs`, `bcslibrary.mjs`, `tamu.mjs`, `theatreCompany.mjs`, `places.mjs`). |
 | `scripts/lib/ics.mjs` | Small iCalendar reader with recurrence expansion (RRULE/RDATE/EXDATE). |
@@ -64,7 +66,7 @@ Data rules the code enforces:
 - **One time zone**: everything is computed and shown in America/Chicago (CST/CDT), whatever the device's zone.
 - **Kinds**: one-time, recurring (each date is its own entry), multi-day/ongoing (e.g. exhibits), regularly-open places.
 - **Ended items are removed** at refresh time *and* hidden live in the browser. An item with no listed end time stays until the end of its day.
-- **Duplicates** (same start minute + very similar title, even across sources) are merged; the card credits both sources.
+- **Duplicates** are merged: the same start minute with a very similar title, or (across sources) the same day within ±30 minutes with matching venue names; the card credits both sources.
 - **Nothing is invented**: missing cost, end time, duration, registration, hours or location are labelled “not listed”. No travel times or accessibility claims.
 - **Failures are visible**: if a source can't be refreshed, its last good items are kept, and the site shows a banner with the failure time, when it last worked, and a link to the source. If the data file itself can't load, the last copy saved in the browser is used and labelled.
 

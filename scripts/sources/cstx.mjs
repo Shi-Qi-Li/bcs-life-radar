@@ -3,7 +3,7 @@
 // The calendar publicly offers "Subscribe → ICS"; we read that same export feed.
 
 import { parseICS, unescapeText, occurrences } from '../lib/ics.mjs';
-import { htmlToText, truncate, extractLinks, registrationFrom, costFromText } from '../lib/normalize.mjs';
+import { htmlToText, cleanDescription, truncate, extractLinks, registrationFrom, costFromText } from '../lib/normalize.mjs';
 import { classify } from '../../public/js/shared/taxonomy.js';
 
 export const SOURCE = {
@@ -18,10 +18,21 @@ export const SOURCE = {
 // Not "activities": internal items, council/committee meetings, office closures and notices.
 const EXCLUDE_TAGS = /^(closure|city council|committee|informational)$/i;
 const EXCLUDE_CATS = /^(meeting|notice)$/i;
+// Civic-education and planning programmes (City operations talks, hearings, budget workshops, enrolment
+// periods). Public, but not leisure; matched against the title, the tags and the start of the description.
+const CIVIC = /\b(seminar suppers?|town hall|public hearing|budget (workshop|meeting)|open enrollment|scenarios workshop)\b/i;
+
+// Department, audience and admin tags the City applies to most listings. They say little about the
+// activity itself ("Parks" is on 163 of 337 feed entries), so they only nudge the type (weight 1).
+// Everything else (Nature, Fitness, Dance, Music, Games, Lecture, History, Food/Drinks, Books, Movie,
+// Art, Holiday, Shop, Health, Sports…) is descriptive and counts as a strong tag.
+export const WEAK_TAG = /^(parks|program|event|special event|community event|adult \(18\+\)|senior \(55\+\)|youth|family friendly|membership|free|paid|registration required)$/i;
+export const splitTags = (tags) => ({ strong: tags.filter((t) => !WEAK_TAG.test(t)), weak: tags.filter((t) => WEAK_TAG.test(t)) });
 
 const first = (ev, k) => ev[k]?.[0]?.value ?? null;
 const all = (ev, k) => (ev[k] || []).map((p) => p.value);
 const list = (v) => (v ? unescapeText(v).split(',').map((s) => s.trim()).filter(Boolean) : []);
+const descriptionText = (ev) => cleanDescription(htmlToText(unescapeText(first(ev, 'DESCRIPTION') || '')));
 
 export function classifyExclusion(ev) {
   const filters = all(ev, 'X-CUSTOM-FILTER');
@@ -31,11 +42,20 @@ export function classifyExclusion(ev) {
   const tags = list(first(ev, 'X-TAGS'));
   if (tags.some((t) => EXCLUDE_TAGS.test(t))) return 'meeting/closure/notice';
   if (cats.length && cats.every((c) => EXCLUDE_CATS.test(c))) return 'meeting/closure/notice';
-  if (/\b(offices? closed|closed for|council meeting|commission meeting|board meeting)\b/i.test(first(ev, 'SUMMARY') || '')) return 'meeting/closure/notice';
+  const title = unescapeText(first(ev, 'SUMMARY') || '');
+  if (/\b(offices? closed|closed for|council meeting|commission meeting|board meeting)\b/i.test(title)) return 'meeting/closure/notice';
+  if (CIVIC.test(title) || tags.some((t) => CIVIC.test(t)) || CIVIC.test(descriptionText(ev).slice(0, 200))) return 'civic/informational';
   return null;
 }
 
-function costFor(ev, tags) {
+/** The sentences of a description that talk about money (at most two), or '' when there are none. */
+export function priceSentences(description) {
+  return String(description || '').split(/(?<=[.!?])\s+|\n+/)
+    .filter((s) => /\$\s?\d|\bfree\b|\bcosts?\b|\bprices?\b|\badmission\b|\bfees?\b|\btickets?\b/i.test(s))
+    .slice(0, 2).join(' ').trim();
+}
+
+function costFor(ev, tags, description) {
   const cost = first(ev, 'X-COST');
   const type = (first(ev, 'X-COST-TYPE') || '').toLowerCase();
   const tagFree = tags.some((t) => /^free$/i.test(t));
@@ -44,9 +64,13 @@ function costFor(ev, tags) {
     const c = costFromText(unescapeText(cost));
     return c.status === 'unknown' ? { status: 'paid', label: `${unescapeText(cost)}`, min: null } : c;
   }
-  if (type === 'paid') return { status: 'paid', label: 'Paid — amount not listed', min: null };
-  if (tagFree && tagPaid) return { status: 'unknown', label: 'Unclear — listed as both free and paid; check source', min: null };
-  if (tagPaid) return { status: 'paid', label: 'Paid — amount not listed', min: null };
+  if (type === 'paid' || tagPaid) {
+    // Marked paid (or both free and paid) without an amount: use only what the description itself states.
+    const fromDesc = costFromText(priceSentences(description));
+    if (fromDesc.status !== 'unknown') return { ...fromDesc, label: `${fromDesc.label} (per description)` };
+    if (tagFree && tagPaid) return { status: 'unknown', label: 'Unclear — listed as both free and paid; check source', min: null };
+    return { status: 'paid', label: 'Paid — amount not listed', min: null };
+  }
   if (type === 'free') return { status: 'free', label: tagFree ? 'Free' : 'Free (marked free in City calendar)', min: 0 };
   return { status: 'unknown', label: 'Cost not listed', min: null };
 }
@@ -93,12 +117,18 @@ export function itemsFromICS(text, { fromMs, toMs, fetchedAt }) {
     const uid = first(ev, 'UID');
     const title = unescapeText(first(ev, 'SUMMARY') || 'Untitled');
     const html = unescapeText(first(ev, 'DESCRIPTION') || '');
-    const description = htmlToText(html);
+    const description = cleanDescription(htmlToText(html));
     const tags = [...list(first(ev, 'X-TAGS')), ...list(first(ev, 'CATEGORIES'))];
+    const { strong, weak } = splitTags(tags);
     const links = extractLinks(html);
-    const multiDay = occ.durationDays && occ.durationDays > 1;
+    // Timely marks entries that have no end time with X-INSTANT-EVENT and a placeholder DTEND of 23:59:59
+    // on the start day; publishing that would invent a duration. Treat it as "end not listed".
+    const noEnd = !!ev['X-INSTANT-EVENT'] || (first(ev, 'DTEND') || '').endsWith('T235959');
+    const multiDay = !noEnd && occ.durationDays && occ.durationDays > 1;
     const kind = occ.totalKnown > 1 ? 'recurring' : multiDay ? 'multi-day' : 'one-time';
     const contact = first(ev, 'CONTACT');
+    const soldOut = first(ev, 'STATUS') === 'SOLD_OUT';
+    if (soldOut) stats.soldOut = (stats.soldOut || 0) + 1;
     const base = {
       seriesId: `cstx:${uid}`,
       kind,
@@ -106,9 +136,11 @@ export function itemsFromICS(text, { fromMs, toMs, fetchedAt }) {
       description: truncate(description, 600),
       summary: truncate(description.replace(/\n/g, ' '), 200),
       location: locationFor(ev),
-      cost: costFor(ev, tags),
-      registration: registrationFrom({ tags, description, links }),
-      types: classify({ tags, title, description }),
+      cost: costFor(ev, tags, description),
+      registration: soldOut
+        ? { ...registrationFrom({ tags, description, links }), status: 'required', label: 'Sold out (per City calendar) — check the source' }
+        : registrationFrom({ tags, description, links }),
+      types: classify({ tags: strong, weakTags: weak, title, description }),
       sourceTags: tags,
       contact: contact ? unescapeText(contact) : null,
       sourceId: SOURCE.id,
@@ -120,10 +152,10 @@ export function itemsFromICS(text, { fromMs, toMs, fetchedAt }) {
         ...base,
         id: `${base.seriesId}@${o.startMs}`,
         start: new Date(o.startMs).toISOString(),
-        end: o.endMs !== null ? new Date(o.endMs).toISOString() : null,
-        endKnown: o.endMs !== null && !(o.allDay && !ev.DTEND),
+        end: !noEnd && o.endMs !== null ? new Date(o.endMs).toISOString() : null,
+        endKnown: !noEnd && o.endMs !== null && !(o.allDay && !ev.DTEND),
         allDay: o.allDay,
-        timeNote: null,
+        timeNote: noEnd && !o.allDay ? 'No end time listed by source' : null,
         sourceUrl: instanceUrl(first(ev, 'URL'), o.wallStart),
       });
     }

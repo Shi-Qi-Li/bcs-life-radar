@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { buildDemo, DEMO_NOW } from '../scripts/make-demo.mjs';
 import { parseDetail, itemsFromDetail } from '../scripts/sources/destinationBryan.mjs';
 import { dedupe, costFromText, registrationFrom } from '../scripts/lib/normalize.mjs';
-import { DEFAULT_FILTERS, filterItems, pickRecommendations, isExpired, rangeFor, placeWindows } from '../public/js/shared/logic.js';
+import { DEFAULT_FILTERS, filterItems, pickRecommendations, isExpired, rangeFor, placeWindows, startsWithin, nowItems, groupSeries, plural, durationLabel, buildReason } from '../public/js/shared/logic.js';
 import { buildICS, googleCalendarUrl, mapLinks } from '../public/js/shared/export.js';
 import { formatDateTime, startOfDay, dayKey } from '../public/js/shared/time.js';
 import { refresh } from '../scripts/refresh.mjs';
@@ -67,7 +67,7 @@ test('Budget filter: free, max price, unknown costs only with "include missing i
   const ten = run({ budget: '10', includeUnknown: false });
   assert.ok(ten.every((m) => m.item.cost.min !== null && m.item.cost.min <= 10));
   assert.ok(!titles(ten).includes('[DEMO] Beginner Pottery Workshop')); // $15
-  assert.ok(titles(ten).includes('[DEMO] Community Quilt Exhibit')); // lowest listed price $4
+  assert.ok(titles(ten).includes('[DEMO] Community Quilt Exhibit')); // adult price $8 (kids $4 is not used as min)
   const withUnknown = run({ budget: '10', includeUnknown: true });
   const craft = withUnknown.find((m) => m.item.title === '[DEMO] Downtown Craft Market');
   assert.ok(craft && craft.unknowns.includes('cost'));
@@ -123,6 +123,69 @@ test('Picks: 3–5, varied, no repeated series, with a factual reason', () => {
   assert.ok(!filterItems(items, { ...DEFAULT_FILTERS, types: [] }, { now: NOW, hidden }).some((m) => m.item.groupKey === picks[0].item.groupKey));
 });
 
+test('Right now: startsWithin / nowItems find happening-now, starting-soon and open-now items', () => {
+  const concert = items.find((i) => i.title === '[DEMO] Lunchtime Park Concert'); // noon CST
+  assert.equal(startsWithin(concert, NOW), true); // 10 AM → starts in 2 h
+  assert.equal(startsWithin(concert, NOW, 3600_000), false); // not within 1 h
+  assert.equal(startsWithin(concert, Date.parse('2026-11-06T18:30:00Z')), false); // already started
+  assert.equal(startsWithin(items.find((i) => i.kind === 'place'), NOW), false);
+  const strip = nowItems(run({ when: 'today' }), NOW);
+  assert.deepEqual(strip.map((x) => [x.status, x.label, x.match.item.title]), [
+    ['soon', 'Starts in 2 h', '[DEMO] Lunchtime Park Concert'],
+    ['open', 'Open now · until 5 PM', '[DEMO] Example Nature Center'],
+  ]);
+  const later = Date.parse('2026-11-06T18:30:00Z'); // 12:30 PM: concert is on
+  const strip2 = nowItems(run({ when: 'today' }, { now: later }), later);
+  assert.equal(strip2[0].status, 'now');
+  assert.equal(strip2[0].label, 'Happening now · until 1 PM');
+  assert.deepEqual(nowItems([], NOW), []);
+  assert.equal(nowItems(run({ when: 'today' }), NOW, { max: 1 }).length, 1);
+  assert.equal(durationLabel(45 * 60_000), '45 min');
+  assert.equal(durationLabel(150 * 60_000), '2 h 30 min');
+  assert.equal(plural(1, 'result'), '1 result');
+  assert.equal(plural(0, 'result'), '0 results');
+  assert.equal(plural(2, 'repeat date'), '2 repeat dates');
+});
+
+test('groupSeries: one entry per recurring series under its next date, other dates kept', () => {
+  const all = run({ when: 'date', date: '2026-11-07' }).concat(run({ when: 'date', date: '2026-11-21' }), run({ when: 'date', date: '2026-11-28' }));
+  const yogaDates = all.filter((m) => /Yoga/.test(m.item.title));
+  assert.equal(yogaDates.length, 3);
+  const grouped = groupSeries(all);
+  const yoga = grouped.filter((m) => /Yoga/.test(m.item.title));
+  assert.equal(yoga.length, 1);
+  assert.equal(dayKey(yoga[0].window.start), '2026-11-07'); // the next date is kept
+  assert.deepEqual(yoga[0].otherDates.map((m) => dayKey(m.window.start)), ['2026-11-21', '2026-11-28']);
+  // Non-recurring items pass through untouched and order is preserved.
+  assert.equal(grouped.length, all.length - 2);
+  assert.ok(grouped.every((m) => m.item.kind === 'recurring' || !('otherDates' in m)));
+  assert.deepEqual(groupSeries([]), []);
+});
+
+test('Reasons are never a bare when-phrase or "Hours not listed"; own save is not "similar to saved"', () => {
+  const place = run({ kind: 'place' }, { now: Date.parse('2026-11-07T04:00:00Z') }); // 10 PM: nature center closed
+  const placeNoHours = { ...items.find((i) => i.kind === 'place'), hours: null, id: 'x', cost: { status: 'unknown', label: 'Cost not listed', min: null }, registration: { status: 'unknown', label: 'n/a', url: null } };
+  const m = { item: placeNoHours, window: null, distance: null, unknowns: ['hours'] };
+  const r = buildReason(m, { now: NOW });
+  assert.ok(!r.includes('Hours not listed'), r);
+  assert.ok(r.includes('Outdoors & nature'), r);
+  assert.ok(place.every((x) => x.window), 'closed place has no window');
+  // A paid, one-time event with nothing else to say still gets a factual signal.
+  const trivia = run().find((x) => x.item.title === '[DEMO] Evening Trivia Night');
+  const r2 = buildReason(trivia, { now: NOW });
+  assert.ok(r2.split(' · ').length >= 2, r2);
+  assert.ok(/Games & social|listed/.test(r2), r2);
+  // Saving an item must not make its own reason "Similar to things you saved or liked".
+  const res = run();
+  const first = pickRecommendations(res, { now: NOW, prefs: {} }, DEFAULT_FILTERS, 5)[0];
+  const liked = new Map(first.item.types.map((t) => [t, 1]));
+  const again = pickRecommendations(res, { now: NOW, prefs: { likedTypes: liked, saved: new Set([first.item.id]) } }, DEFAULT_FILTERS, 5);
+  const self = again.find((p) => p.item.id === first.item.id);
+  assert.ok(self && !self.reason.includes('Similar to things you saved'), self?.reason);
+  const other = pickRecommendations(res, { now: NOW, prefs: { likedTypes: liked, saved: new Set(['someone-else']) } }, DEFAULT_FILTERS, 5).find((p) => p.item.id === first.item.id);
+  assert.ok(other.reason.includes('Similar to things you saved'), other.reason);
+});
+
 test('Calendar export: UTC times, no invented end, all-day dates, folded lines', () => {
   const concert = items.find((i) => i.title === '[DEMO] Lunchtime Park Concert');
   const ics = buildICS(concert, { now: NOW });
@@ -156,7 +219,8 @@ test('Destination Bryan page: visible time wins over wrong JSON-LD "Z"; year rol
 test('Cost and registration text are labelled, not guessed', () => {
   assert.deepEqual(costFromText(''), { status: 'unknown', label: 'Cost not listed', min: null });
   assert.equal(costFromText('Free').status, 'free');
-  assert.deepEqual(costFromText('$12 for adults | $5 for kids | Free for children'), { status: 'mixed', label: '$12 for adults | $5 for kids | Free for children', min: 5 });
+  // min is the typical adult price, not the lowest (kids') price, so the budget filter does not hide a $12 event under "$5".
+  assert.deepEqual(costFromText('$12 for adults | $5 for kids | Free for children'), { status: 'mixed', label: '$12 for adults | $5 for kids | Free for children', min: 12 });
   assert.equal(costFromText('Donations welcome').status, 'unknown');
   assert.equal(registrationFrom({ description: 'Just show up.' }).status, 'unknown');
   assert.equal(registrationFrom({ description: 'Registration is required by Nov 5.' }).status, 'required');

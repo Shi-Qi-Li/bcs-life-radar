@@ -29,7 +29,7 @@ const browser = await chromium.launch(executablePathOpt());
 function executablePathOpt() { return process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {}; }
 
 async function open(url, ctxOpts = {}) {
-  const ctx = await browser.newContext({ acceptDownloads: true, ...ctxOpts });
+  const ctx = await browser.newContext({ acceptDownloads: true, serviceWorkers: 'block', ...ctxOpts });
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
@@ -39,6 +39,11 @@ async function open(url, ctxOpts = {}) {
   return { ctx, page, errors };
 }
 const cardByTitle = (page, t) => page.locator('.card', { has: page.locator('h3', { hasText: t }) });
+// Browse all shows compact rows on phones and cards elsewhere; both carry data-id.
+const itemByTitle = (page, t) => page.locator('#allResults [data-id]', { hasText: t });
+// The document must never be wider than the viewport (compare to clientWidth, which does not grow with the content).
+const overflowPx = (page) => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+const ready = (page) => page.waitForSelector('body[data-ready="1"]');
 
 try {
   console.log('Layouts');
@@ -48,24 +53,51 @@ try {
     ['desktop', { viewport: { width: 1366, height: 900 }, deviceScaleFactor: 1 }],
   ];
   for (const [name, dev] of layouts) {
-    await check(`${name}: renders 3–5 picks with no horizontal scrolling or errors`, async () => {
+    await check(`${name}: renders 3–5 picks; no view is wider than the screen; no errors`, async () => {
       const { ctx, page, errors } = await open(DEMO, { ...dev, timezoneId: 'America/Chicago' });
       const n = await page.locator('#picks .card').count();
       assert(n >= 3 && n <= 5, `expected 3–5 picks, got ${n}`);
-      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-      assert(overflow <= 0, `horizontal overflow ${overflow}px`);
+      assert((await overflowPx(page)) <= 0, `discover overflows by ${await overflowPx(page)}px`);
       const firstCardTop = await page.locator('#picks .card').first().boundingBox();
       assert(firstCardTop.y < dev.viewport.height, `first pick starts below the fold (${firstCardTop.y}px)`);
       await page.screenshot({ path: `${SHOTS}/${name}-discover.png` });
       await page.locator('#picks .card').first().locator('[data-act="details"]').first().click();
       await page.waitForSelector('dialog[open]');
-      const dOverflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-      assert(dOverflow <= 0, `dialog overflow ${dOverflow}px`);
+      assert((await overflowPx(page)) <= 0, `dialog overflows by ${await overflowPx(page)}px`);
       await page.screenshot({ path: `${SHOTS}/${name}-details.png` });
+      await page.keyboard.press('Escape');
+      await page.waitForSelector('dialog:not([open])', { state: 'attached' });
+      await page.click('#toggleAll');
+      assert((await overflowPx(page)) <= 0, `browse all overflows by ${await overflowPx(page)}px`);
+      await page.screenshot({ path: `${SHOTS}/${name}-browse-all.png` });
+      for (const v of ['saved', 'sources']) {
+        await page.click(`[data-tab="${v}"]`);
+        await page.waitForSelector(`#view-${v}:not([hidden])`);
+        assert((await overflowPx(page)) <= 0, `#/${v} overflows by ${await overflowPx(page)}px`);
+      }
       assert(!errors.length, `console errors: ${errors.join(' | ')}`);
       await ctx.close();
     });
   }
+  await check('phone: Sources tables stay inside their cards; toast Undo is on screen; touch targets ≥ 44 px', async () => {
+    const { ctx, page } = await open(`${BASE}/#/sources`, { ...devices['iPhone 13'], timezoneId: 'America/Chicago' });
+    await page.waitForSelector('#view-sources:not([hidden])');
+    const tbl = await page.evaluate(() => [...document.querySelectorAll('.source-card')].map((c) => c.querySelector('table').getBoundingClientRect().width - c.getBoundingClientRect().width));
+    assert(tbl.length && tbl.every((d) => d <= 0), `table wider than card by ${tbl}`);
+    const linkText = await page.locator('table.kv a').first().innerText();
+    assert(!/^https?:/.test(linkText), `source link should show the hostname, got ${linkText}`);
+    await page.goto(DEMO); await ready(page);
+    const sizes = await page.evaluate(() => [...document.querySelectorAll('.tabs a, #filters .chip, #picks .btn, .more > summary, #toggleAll')].filter((e) => e.offsetParent).map((e) => [e.tagName + (e.className ? `.${String(e.className).split(' ')[0]}` : ''), Math.round(e.getBoundingClientRect().height)]));
+    const small = sizes.filter(([, h]) => h < 44);
+    assert(sizes.length > 10 && !small.length, `targets under 44 px: ${JSON.stringify(small.slice(0, 6))}`);
+    await page.locator('#picks .card').nth(1).locator('[data-act="hide"]').click();
+    const undo = await page.locator('#toast .undo').boundingBox();
+    const vh = await page.evaluate(() => (window.visualViewport ? window.visualViewport.height : innerHeight));
+    assert(undo && undo.y + undo.height <= vh, `Undo button off screen (${JSON.stringify(undo)} vs ${vh})`);
+    await page.click('#toast .dismiss');
+    assert(await page.locator('#toast[hidden]').count() === 1, 'toast did not dismiss');
+    await ctx.close();
+  });
 
   console.log('Cards & data reliability');
   await check('every card shows name, description, when, where, cost, registration, reason, source link, updated time', async () => {
@@ -78,6 +110,8 @@ try {
       assert(await c.locator('.desc').count() === 1, `card ${i} missing description`);
       const href = await c.locator('.meta a').first().getAttribute('href');
       assert(/^https:\/\//.test(href), `card ${i} source link ${href}`);
+      const reason = await c.locator('.reason').innerText();
+      assert(reason.replace('Why this pick:', '').split(' · ').length >= 2, `card ${i} reason is a bare when-phrase: ${reason}`);
     }
     await ctx.close();
   });
@@ -94,7 +128,7 @@ try {
     assert(!body.includes('Early Bird Walk'), 'expired event visible');
     assert(body.includes('Lunchtime Park Concert'), 'current event missing');
     // Same page, later clock: concert is over → gone.
-    await page.goto(`${DEMO}&now=2026-11-06T19:30:00Z`); await page.waitForSelector('body[data-ready="1"]');
+    await page.goto(`${DEMO}&now=2026-11-06T19:30:00Z`); await ready(page);
     await page.click('[data-when="today"]');
     assert(!(await page.locator('main').innerText()).includes('Lunchtime Park Concert'), 'ended concert still listed');
     await ctx.close();
@@ -122,6 +156,47 @@ try {
     await page.click('#toggleAll');
     const kinds = await page.locator('#allResults .badge[class*="kind-"]').allInnerTexts();
     for (const k of ['ONE-TIME', 'RECURRING', 'MULTI-DAY / ONGOING', 'REGULARLY OPEN PLACE']) assert(kinds.map((x) => x.toUpperCase()).includes(k), `missing kind ${k}`);
+    await ctx.close();
+  });
+  await check('"Right now" strip: concert starts in 2 h and the nature center is open now (hidden when empty)', async () => {
+    const { ctx, page } = await open(DEMO);
+    assert(await page.locator('#nowStrip:not([hidden])').count() === 1, 'strip hidden');
+    const chips = await page.locator('#nowChips .now-chip').allInnerTexts();
+    assert(chips.some((t) => /starts in 2 h/i.test(t) && /Lunchtime Park Concert/.test(t)), `no "starts in 2 h" chip: ${chips}`);
+    assert(chips.some((t) => /open now/i.test(t) && /Nature Center/.test(t)), `no "open now" chip: ${chips}`);
+    await page.locator('#nowChips .now-chip').first().click();
+    await page.waitForSelector('dialog[open]');
+    assert((await page.locator('#detailTitle').innerText()).includes('Lunchtime Park Concert'), 'chip did not open details');
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !location.hash.startsWith('#/item/')); // the close handler pops its history entry
+    // Tue Nov 10, 10 PM: the book club has ended and nothing starts within 3 h → the strip is hidden.
+    await page.goto(`${DEMO}&now=2026-11-11T04:00:00Z`); await ready(page);
+    assert(await page.locator('#nowStrip[hidden]').count() === 1, 'strip should be hidden on Tue 10 PM');
+    await ctx.close();
+  });
+  await check('recurring series are grouped in Browse all (one card, date chips) unless "show every date" is chosen', async () => {
+    const demo = JSON.parse(readFileSync(`${ROOT}public/data/demo-events.json`, 'utf8'));
+    const yoga = demo.items.find((i) => i.title === '[DEMO] Saturday Yoga in the Park');
+    const shift = (it, days) => ({ ...it, id: `${it.id}-plus${days}`, start: new Date(Date.parse(it.start) + days * 864e5).toISOString(), end: new Date(Date.parse(it.end) + days * 864e5).toISOString() });
+    const data = { ...demo, items: [...demo.items, shift(yoga, 2), shift(yoga, 4)] }; // Mon Nov 9 and Wed Nov 11 too
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, serviceWorkers: 'block' });
+    const page = await ctx.newPage();
+    await page.route('**/data/demo-events.json', (r) => r.fulfill({ json: data }));
+    await page.goto(DEMO); await ready(page);
+    assert((await page.locator('#summary').innerText()).includes('2 repeat dates grouped'), await page.locator('#summary').innerText());
+    await page.click('#toggleAll');
+    const yogaCards = itemByTitle(page, 'Saturday Yoga in the Park');
+    assert(await yogaCards.count() === 1, `expected 1 grouped yoga card, got ${await yogaCards.count()}`);
+    const chips = await yogaCards.first().locator('.repeats [data-open]').allInnerTexts();
+    assert(chips.join(' ') === 'Mon 9 Wed 11', `date chips: ${chips.join(' | ')}`);
+    assert(await page.locator('#picks .card h3', { hasText: 'Yoga' }).count() <= 1, 'picks must still show a series once');
+    await yogaCards.first().locator('.repeats [data-open]').nth(1).click();
+    await page.waitForSelector('dialog[open]');
+    assert((await page.locator('#detail .facts').innerText()).includes('Wed, Nov 11'), 'chip should open that date');
+    await page.keyboard.press('Escape');
+    await page.evaluate(() => { document.querySelector('#moreFilters').open = true; });
+    await page.selectOption('select[name="kind"]', 'every');
+    assert(await itemByTitle(page, 'Saturday Yoga in the Park').count() === 3, 'every date should list all three');
     await ctx.close();
   });
 
@@ -189,6 +264,38 @@ try {
     assert((await page.locator('#transportHint').innerText()).includes('not a route'), 'hint should disclaim travel time');
     await ctx.close();
   });
+  await check('day pills show counts and select a date; mood shows its types; filters make a shareable URL', async () => {
+    const { ctx, page } = await open(DEMO);
+    const pills = await page.locator('#dayStrip .day-pill').allInnerTexts();
+    assert(pills.length === 7 && /^Today 6/.test(pills[0].replace(/\s+/g, ' ')) && /^Tmrw 7/.test(pills[1].replace(/\s+/g, ' ')), `pills: ${pills.join(' | ')}`);
+    await page.click('#dayStrip .day-pill[data-day="2026-11-10"]');
+    const summary = await page.locator('#summary').innerText();
+    assert(/Selected date \(Tue, Nov 10\)/.test(summary), summary);
+    assert(await page.locator('#dayStrip .day-pill[data-day="2026-11-10"][aria-pressed="true"]').count() === 1, 'pill not highlighted');
+    assert((await page.locator('#pickDate').innerText()).includes('Tue, Nov 10'), 'date chip label');
+    await page.evaluate(() => { document.querySelector('#moreFilters').open = true; });
+    await page.click('[data-mood="social"]');
+    assert((await page.locator('#moodHint').innerText()).startsWith('Social = Games & social'), 'mood hint');
+    const hash = await page.evaluate(() => location.hash);
+    assert(hash.includes('when=date') && hash.includes('date=2026-11-10') && hash.includes('mood=social'), `hash ${hash}`);
+    // The URL restores the same filters.
+    await page.goto(`${DEMO}${hash}`); await ready(page);
+    assert((await page.locator('#summary').innerText()).includes('Tue, Nov 10'), 'deep-linked date lost');
+    assert(await page.locator('[data-mood="social"][aria-pressed="true"]').count() === 1, 'deep-linked mood lost');
+    await ctx.close();
+  });
+  await check('late evening: When defaults to Tomorrow with a dismissible note; a thin range suggests other ranges', async () => {
+    const { ctx, page } = await open(`${DEMO}&now=2026-11-07T04:00:00Z`); // 10 PM CST Friday
+    assert(await page.locator('[data-when="tomorrow"][aria-pressed="true"]').count() === 1, 'When should default to Tomorrow after 9 PM');
+    assert((await page.locator('#lateNote').innerText()).includes('after 9 PM'), 'no late note');
+    await page.click('#lateNote [data-when="today"]');
+    assert(await page.locator('#lateNote[hidden]').count() === 1, 'note should go when the user picks a range');
+    const suggest = await page.locator('#suggest').innerText();
+    assert(/Not much left tonight/.test(suggest) && /Tomorrow \(\d+\)/.test(suggest), `suggestion row: ${suggest}`);
+    await page.click('#suggest [data-when="weekend"]');
+    assert((await page.locator('#summary').innerText()).includes('This weekend'), 'suggestion did not switch range');
+    await ctx.close();
+  });
 
   console.log('Discover → details → navigate / calendar → feedback');
   await check('details dialog: directions link + .ics download with correct UTC time', async () => {
@@ -205,13 +312,61 @@ try {
     assert(gcal.includes('ctz=America%2FChicago'), 'gcal tz');
     await ctx.close();
   });
+  await check('details dialog is a history entry: Back closes it, focus returns to the opener, #/item/<id> deep-links', async () => {
+    const { ctx, page } = await open(DEMO, { ...devices['iPhone 13'], timezoneId: 'America/Chicago' });
+    const first = page.locator('#picks .card').first();
+    const title = await first.locator('h3').innerText();
+    await first.locator('.actions [data-act="details"]').click();
+    await page.waitForSelector('dialog[open]');
+    const hash = await page.evaluate(() => location.hash);
+    assert(/^#\/item\//.test(hash), `hash ${hash}`);
+    // Scrolled dialog on a phone: the close button is still on screen.
+    await page.evaluate(() => { document.querySelector('.dialog-inner').scrollTop = 600; });
+    const close = await page.locator('#closeDetail').boundingBox();
+    assert(close && close.y >= 0 && close.y < 100, `close button off screen: ${JSON.stringify(close)}`);
+    await page.goBack();
+    await page.waitForSelector('dialog:not([open])', { state: 'attached' });
+    assert((await page.evaluate(() => location.href)).startsWith(DEMO), 'Back left the site');
+    assert(await page.evaluate(() => document.activeElement?.dataset.act) === 'details', 'focus did not return to the opener');
+    // × also drops the history entry (Back then leaves normally) and the deep link opens the same item.
+    await page.goto(`${DEMO}${hash}`); await ready(page);
+    await page.waitForSelector('dialog[open]');
+    assert((await page.locator('#detailTitle').innerText()) === title, 'deep link opened the wrong item');
+    await page.click('#closeDetail');
+    await page.waitForSelector('dialog:not([open])', { state: 'attached' });
+    await page.waitForFunction(() => !location.hash.startsWith('#/item/'));
+    await ctx.close();
+  });
+  await check('Save / Been there toggle in place: picks stay, dialog keeps its scroll, focus stays, no self "similar" reason', async () => {
+    const { ctx, page } = await open(DEMO, { viewport: { width: 1280, height: 520 } }); // short window so the dialog scrolls
+    const before = await page.locator('#picks .card h3').allInnerTexts();
+    const first = page.locator('#picks .card').first();
+    await first.locator('[data-act="save"]').click();
+    assert(await page.evaluate(() => document.activeElement?.dataset.act) === 'save', 'focus lost after Save');
+    assert((await first.locator('[data-act="save"]').innerText()) === '★ Saved', 'button not toggled');
+    assert(!(await first.locator('.reason').innerText()).includes('Similar to things you saved'), 'self-referential reason');
+    await page.locator('#picks .card').nth(1).locator('[data-act="been"]').click();
+    const after = await page.locator('#picks .card h3').allInnerTexts();
+    assert(JSON.stringify(after) === JSON.stringify(before), `picks changed: ${before} → ${after}`);
+    assert((await page.locator('#picks .card').nth(1).locator('[data-act="been"]').innerText()) === '✓ Been there', 'been not toggled in place');
+    await first.locator('.actions [data-act="details"]').click();
+    await page.waitForSelector('dialog[open]');
+    const scrollBefore = await page.evaluate(() => { const d = document.querySelector('.dialog-inner'); d.scrollTop = 150; return d.scrollTop; });
+    assert(scrollBefore > 100, `dialog not scrollable (${scrollBefore})`);
+    await page.click('[data-detail-act="save"]');
+    assert((await page.evaluate(() => document.querySelector('.dialog-inner').scrollTop)) === scrollBefore, 'dialog scroll reset');
+    assert(await page.evaluate(() => document.activeElement?.dataset.detailAct) === 'save', 'dialog focus moved');
+    assert((await page.locator('[data-detail-act="save"]').innerText()) === '☆ Save', 'dialog save button not toggled');
+    assert(await page.locator('[data-detail-act="share"]').count() === 1, 'no Share button');
+    await ctx.close();
+  });
   await check('Save persists across reloads; Not interested hides with Undo; Been there marks', async () => {
     const { ctx, page } = await open(DEMO);
     const first = page.locator('#picks .card').first();
     const title = await first.locator('h3').innerText();
     await first.locator('[data-act="save"]').click();
     assert((await page.locator('#savedCount').innerText()) === '1', 'saved count');
-    await page.reload(); await page.waitForSelector('body[data-ready="1"]');
+    await page.reload(); await ready(page);
     await page.click('[data-tab="saved"]');
     await page.waitForSelector('#view-saved:not([hidden])');
     assert((await page.locator('#savedContent').innerText()).includes(title), 'saved item missing after reload');
@@ -221,7 +376,7 @@ try {
     const t2 = await second.locator('h3').innerText();
     await second.locator('[data-act="hide"]').click();
     assert(!(await page.locator('#picks').innerText()).includes(t2), 'hidden item still shown');
-    await page.click('#toast button');
+    await page.click('#toast .undo');
     assert((await page.locator('#picks').innerText()).includes(t2), 'undo failed');
     await page.locator('#picks .card').first().locator('[data-act="been"]').click();
     assert(await page.locator('#picks .card').first().locator('.badge', { hasText: 'Been there' }).count() === 1, 'been badge');
@@ -231,34 +386,59 @@ try {
   await check('after the event ends, Saved asks "Did you go?" and records feedback', async () => {
     const { ctx, page } = await open(DEMO, { ...devices['iPhone 13'] });
     await page.click('#toggleAll');
-    await cardByTitle(page, 'Lunchtime Park Concert').first().locator('[data-act="save"]').click();
-    await page.goto(`${DEMO}&now=2026-11-06T20:00:00Z#/saved`); await page.waitForSelector('body[data-ready="1"]');
+    await itemByTitle(page, 'Lunchtime Park Concert').first().locator('[data-act="save"]').click();
+    assert((await page.locator('#savedCount').innerText()) === '1', 'saved from the list row');
+    await page.goto(`${DEMO}&now=2026-11-06T20:00:00Z#/saved`); await ready(page);
     const saved = page.locator('#savedContent');
     assert((await saved.innerText()).includes('Did you go?'), 'no prompt');
     assert(await page.locator('#savedCount.alert').count() === 1, 'nav badge should flag items to rate');
     for (const v of ['saved', 'sources', '']) {
-      await page.goto(`${DEMO}&now=2026-11-06T20:00:00Z#/${v}`); await page.waitForSelector('body[data-ready="1"]');
-      const ov = await page.evaluate(() => Math.max(document.documentElement.scrollWidth - innerWidth, ...[...document.querySelectorAll('.tabs a, .brand')].map((e) => e.getBoundingClientRect().right - innerWidth)));
+      await page.goto(`${DEMO}&now=2026-11-06T20:00:00Z#/${v}`); await ready(page);
+      const ov = await page.evaluate(() => Math.max(document.documentElement.scrollWidth - document.documentElement.clientWidth, ...[...document.querySelectorAll('.tabs a, .brand')].map((e) => e.getBoundingClientRect().right - document.documentElement.clientWidth)));
       assert(ov <= 0, `#/${v}: content overflows the screen by ${ov}px`);
     }
-    await page.goto(`${DEMO}&now=2026-11-06T20:00:00Z#/saved`); await page.waitForSelector('body[data-ready="1"]');
+    await page.goto(`${DEMO}&now=2026-11-06T20:00:00Z#/saved`); await ready(page);
     await page.screenshot({ path: `${SHOTS}/phone-saved-feedback.png` });
     await saved.locator('[data-fb="liked"]').first().click();
     assert((await saved.innerText()).includes('👍 Liked it'), 'feedback not recorded');
     assert(await page.evaluate(() => Object.values(JSON.parse(localStorage.getItem('bcs-life-radar:v1')).feedback)[0].value) === 'liked', 'not in storage');
     await ctx.close();
   });
+  await check('phone Browse all: compact list rows by default, Cards/List toggle remembered, sticky day headings sit under the header', async () => {
+    const { ctx, page } = await open(DEMO, { ...devices['iPhone 13'], timezoneId: 'America/Chicago' });
+    await page.click('[data-browse-all]');
+    assert(await page.locator('#allResults .row').count() > 5, 'no list rows');
+    assert(await page.locator('#allResults .card').count() === 0, 'cards shown in list mode');
+    const rowOver = await page.evaluate(() => Math.max(...[...document.querySelectorAll('#allResults .row, #allResults .row [data-act="save"]')].map((e) => e.getBoundingClientRect().right - document.documentElement.clientWidth)));
+    assert(rowOver <= 0, `list rows reach past the screen edge by ${rowOver}px`);
+    assert(await page.locator('#viewToggle [data-view="list"][aria-pressed="true"]').count() === 1, 'List not marked active');
+    const headerH = await page.evaluate(() => document.querySelector('.site-header').getBoundingClientRect().height);
+    const top = await page.evaluate(() => parseFloat(getComputedStyle(document.querySelector('.day-heading')).top));
+    assert(Math.abs(top - headerH) < 1.5, `day heading top ${top} vs header ${headerH}`);
+    const headings = await page.locator('.day-heading').allInnerTexts();
+    assert(headings[0].startsWith('Today · Fri, Nov 6'), `heading format: ${headings[0]}`);
+    await page.screenshot({ path: `${SHOTS}/phone-browse-list.png` });
+    await page.locator('#allResults .row').first().locator('.row-main').click();
+    await page.waitForSelector('dialog[open]');
+    await page.keyboard.press('Escape');
+    await page.click('[data-view="cards"]');
+    assert(await page.locator('#allResults .card').count() > 5, 'cards mode did not render');
+    await page.reload(); await ready(page);
+    await page.click('#toggleAll');
+    assert(await page.locator('#allResults .card').count() > 5, 'layout choice not remembered');
+    await ctx.close();
+  });
 
   console.log('Refresh failures & stale data (real data file)');
   const real = JSON.parse(readFileSync(`${ROOT}public/data/events.json`, 'utf8'));
   await check('failed source → banner with last-updated time and link to original source', async () => {
-    const ctx = await browser.newContext();
+    const ctx = await browser.newContext({ serviceWorkers: 'block' });
     const page = await ctx.newPage();
     const failed = structuredClone(real);
     failed.sources[1] = { ...failed.sources[1], status: 'failed', error: 'HTTP 503', lastAttempt: new Date().toISOString() };
     failed.generatedAt = new Date().toISOString();
     await page.route('**/data/events.json', (r) => r.fulfill({ json: failed }));
-    await page.goto(BASE); await page.waitForSelector('body[data-ready="1"]');
+    await page.goto(BASE); await ready(page);
     const b = page.locator('.banner.error');
     assert(await b.count() === 1, 'no failure banner');
     const t = await b.innerText();
@@ -268,22 +448,36 @@ try {
     await ctx.close();
   });
   await check('data file unreachable → cached copy on device is used and labelled', async () => {
-    const ctx = await browser.newContext();
+    const ctx = await browser.newContext({ serviceWorkers: 'block' });
     const page = await ctx.newPage();
-    await page.goto(BASE); await page.waitForSelector('body[data-ready="1"]'); // caches a copy
+    await page.goto(BASE); await ready(page); // caches a copy
     await page.route('**/data/events.json', (r) => r.fulfill({ status: 503, body: 'down' }));
-    await page.reload(); await page.waitForSelector('body[data-ready="1"]');
+    await page.reload(); await ready(page);
     const t = await page.locator('.banner.error').innerText();
     assert(/Couldn't load the latest information/.test(t) && /copy saved on this device/.test(t), t);
     assert(await page.locator('#picks .card').count() >= 3, 'no cards from cache');
     await ctx.close();
   });
+  await check('repeat visit paints picks from the saved copy before the network answers', async () => {
+    const ctx = await browser.newContext({ serviceWorkers: 'block' });
+    const page = await ctx.newPage();
+    await page.goto(BASE); await ready(page); // caches a copy
+    let release;
+    const gate = new Promise((r) => { release = r; });
+    await page.route('**/data/events.json', async (r) => { await gate; await r.continue(); });
+    await page.reload();
+    await page.waitForSelector('#picks .card:not(.skeleton)', { timeout: 5000 });
+    assert(await page.evaluate(() => document.body.dataset.ready) !== '1', 'ready flag should wait for the network copy');
+    release();
+    await ready(page);
+    await ctx.close();
+  });
   await check('old data (3 days) → "may be out of date" banner', async () => {
-    const ctx = await browser.newContext();
+    const ctx = await browser.newContext({ serviceWorkers: 'block' });
     const page = await ctx.newPage();
     const old = structuredClone(real); old.generatedAt = new Date(Date.now() - 3 * 86400000).toISOString();
     await page.route('**/data/events.json', (r) => r.fulfill({ json: old }));
-    await page.goto(BASE); await page.waitForSelector('body[data-ready="1"]');
+    await page.goto(BASE); await ready(page);
     assert((await page.locator('#banners').innerText()).includes('may be out of date'), 'no stale banner');
     await ctx.close();
   });

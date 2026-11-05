@@ -1,0 +1,776 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-////NONSGML kigkonsult.se iCalcreator 2.26.9//
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:City of College Station Calendar
+X-FROM-URL:https://events.timely.fun/yl7pe679
+X-WR-TIMEZONE:CST6CDT
+BEGIN:VTIMEZONE
+TZID:CST6CDT
+X-LIC-LOCATION:CST6CDT
+BEGIN:STANDARD
+DTSTART:20261101T020000
+TZOFFSETFROM:-0500
+TZOFFSETTO:-0600
+RDATE:20271107T020000
+TZNAME:CST
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:20270314T020000
+TZOFFSETFROM:-0600
+TZOFFSETTO:-0500
+RDATE:20280312T020000
+TZNAME:CDT
+END:DAYLIGHT
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:17246c9a-0358-4fab-8f43-990bb0b0eb25-time.ly
+DTSTAMP:20261105T055827Z
+CATEGORIES;LANGUAGE=en-US:Program
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/Facebook%20E
+ vent%20Images%201_eVSO.png' /></div><p>Set sail on a nautical adventure wi
+ th D&D Boundless Blue Campaign\, a beginner-friendly tabletop role-playing
+  campaign where you can explore the golden age of piracy and adventure at 
+ the Gary Halter Nature Center. </p>\n<p>Create your own character or use a
+  premade one as you navigate the high seas. Materials\, snacks and supplie
+ s are provided\, and you can continue playing the same character across se
+ ssions or switch characters between dates. No previous D&D experience is r
+ equired.</p>\n<p>The program is for ages 13 and older. Admission is $5 for
+  residents and $6 for non-residents per day. Registration is open through 
+ class day.</p>\n<div class='btn' style='margin:0px\;padding:15px\;width:30
+ 0px\;background-color:#223d92\;text-align:center\;border-radius:5px\;color
+ :#ffffff\;'><a style='background-color:transparent\;line-height:inherit\;c
+ olor:#ffffff\;text-decoration-line:none\;font-weight:bold\;' href='https:/
+ /txcollegestationweb.myvscloud.com/webtrac/web/search.html?Action=Start&Su
+ bAction=&csrftoken=&category=ADULT-TEEN&=&primarycode=LCN-97' rel='nofollo
+ w noreferrer noopener' target='_blank'>Reserve Your Spot</a></div>\n<p>For
+  more information\, contact the Gary Halter Nature Center at 979.764.6216.
+ </p>
+DTSTART;TZID=CST6CDT:20260912T173000
+DTEND;TZID=CST6CDT:20260912T223000
+GEO:+30.568073;-96.211266
+LOCATION:Gary Halter Nature Center @ 13600 Rock Prairie Road\, College Stat
+ ion\, Texas\, 77845\, United States
+RDATE;TZID=CST6CDT:20260925T173000
+RDATE;TZID=CST6CDT:20261002T173000
+RDATE;TZID=CST6CDT:20261009T173000
+RDATE;TZID=CST6CDT:20261120T173000
+RDATE;TZID=CST6CDT:20261121T173000
+RDATE;TZID=CST6CDT:20261218T173000
+RDATE;TZID=CST6CDT:20261219T173000
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:D&D Boundless Blue Campaign
+URL:https://events.timely.fun/yl7pe679/event/d?instance_id=20260912173000
+X-ORIGINAL-URL:
+X-COST:$5
+X-COST-TYPE:paid
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/Facebook%20Event%20Images%201_eVSO.png
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Parks,Registration Required,Youth,Paid,Family Friendl
+ y,Special Event,Adult (18+)
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:e3dae345-082b-4f41-8012-3b64bd936023-time.ly
+DTSTAMP:20261105T055827Z
+CATEGORIES;LANGUAGE=en-US:Program
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/615882821_12
+ 2120684337030702_373625042050832482_n_H863.jpg' /></div><p>Put on your dan
+ cing shoes and enjoy an evening of Bachata and Salsa with the local dance 
+ community. Whether you’re a seasoned dancer or just starting out\, the hos
+ t will guide you on the floor and help you move to the rhythm. The dance i
+ s free and open to ages 18 and older.<br /><br />For more information\, co
+ ntact the Southwood Community Center at 979.764.6351.</p>
+DTSTART;TZID=CST6CDT:20260829T190000
+DTEND;TZID=CST6CDT:20260829T220000
+GEO:+30.580956;-96.293745
+LOCATION:Southwood Community Center @ 1520 Rock Prairie Road\, College Stat
+ ion\, Texas\, 77845\, United States
+RDATE;TZID=CST6CDT:20260926T190000
+RDATE;TZID=CST6CDT:20261024T190000
+RDATE;TZID=CST6CDT:20261121T190000
+RDATE;TZID=CST6CDT:20261212T190000
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Latin Dance Social
+URL:https://events.timely.fun/yl7pe679/event/latin-dance-social-11?instance
+ _id=20260829190000
+X-ORIGINAL-URL:
+X-COST-TYPE:free
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/615882821_122120684337030702_373625042050832482_n_H863.jpg
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Adult (18+),Dance,Free,Parks,Senior (55+),Music
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:57537b9e-8b2a-48f9-a239-f131b3ba90be-time.ly
+DTSTAMP:20261105T055828Z
+CATEGORIES;LANGUAGE=en-US:Event
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/261ee06d-af5
+ d-4cab-95e5-8725d32950d8_nOdB.jpg' /></div><p>Get ready for an evening of 
+ music\, games and good company! Adults 55 and older are invited to enjoy a
+  night of dancing and games Friday\, Nov. 20\, from 6–9 p.m. at the Southw
+ ood Community Center.</p>\n<p>Dance to country music and hits from the 196
+ 0s through the 1980s\, or play cards\, board games or dominoes. Light refr
+ eshments will be served. Admission is free.</p>\n<p>For more information o
+ n senior programs\, call 979.764.2670 or visit <a href='https://www.cstx.g
+ ov/parks-recreation-culture/senior-adult-programs/' rel='nofollow noreferr
+ er noopener' target='_blank'>cstx.gov/seniors</a>.</p>
+DTSTART;TZID=CST6CDT:20261120T180000
+DTEND;TZID=CST6CDT:20261120T210000
+GEO:+30.580956;-96.293745
+LOCATION:Southwood Community Center @ 1520 Rock Prairie Road\, College Stat
+ ion\, Texas\, 77845\, United States
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Seniors Night Out: Dancing & Games
+URL:https://events.timely.fun/yl7pe679/event/seniors-night-out-dancing-5?in
+ stance_id=20261120180000
+X-ORIGINAL-URL:
+X-COST-TYPE:free
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/261ee06d-af5d-4cab-95e5-8725d32950d8_nOdB.jpg
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Senior (55+),Dance,Games,Food/Drinks,Parks,Free,Speci
+ al Event
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:993d1b9c-7f68-4e3a-b45d-1d85a7686f53-time.ly
+DTSTAMP:20261105T055828Z
+CATEGORIES;LANGUAGE=en-US:Event
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/Fall-Explori
+ ng-History-Luncheons--Web_Facebook-Post_fRuo.jpg' /></div><p>Take a break 
+ for lunch and explore the community’s past at the Exploring History Lunche
+ on\, presented in partnership with the College Station Historic Preservati
+ on Committee. November’s topic is “College Station: A City Founded with Pa
+ rks\,” presented by Steve Beachy\, former College Station Parks and Recrea
+ tion director\, and Dr. John Crompton\, professor in the Department of Rec
+ reation\, Park and Tourism Sciences at Texas A&M University.</p>\n<p>The l
+ uncheon will be held Wednesday\, Nov. 18\, from 11:30 a.m.–1 p.m. at the L
+ arry J. Ringer Library. Attendance is free\, with lunch available for $10 
+ for residents and $12 for non-residents. Lunch reservations are required b
+ y Friday\, Nov. 13. A limited number of meals will be available at the doo
+ r for $12.</p>\n<div class='btn' style='margin:0px\;padding:15px\;width:30
+ 0px\;background-color:#223d92\;text-align:center\;border-radius:5px\;color
+ :#ffffff\;'><a style='background-color:transparent\;line-height:inherit\;c
+ olor:#ffffff\;text-decoration-line:none\;font-weight:bold\;' href='https:/
+ /txcollegestationweb.myvscloud.com/webtrac/web/search.html?Action=Start&Su
+ bAction=&csrftoken=&category=EVENTS&=&primarycode=PKS-17' rel='nofollow no
+ referrer noopener' target='_blank'>Reserve Your Lunch</a></div>\n<p>For mo
+ re information\, contact the Parks and Recreation Administrative Office at
+  979.764.3486.</p>
+DTSTART;TZID=CST6CDT:20261118T113000
+DTEND;TZID=CST6CDT:20261118T130000
+GEO:+30.59007;-96.314508
+LOCATION:Larry J. Ringer Library @ 1818 Harvey Mitchell Parkway South\, Col
+ lege Station\, Texas\, 77845\, United States
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Exploring History Luncheon: “College Station: A City Founded with P
+ arks”
+URL:https://events.timely.fun/yl7pe679/event/exploring-history-luncheon-col
+ lege-station-a-city-founded-with-parks?instance_id=20261118113000
+X-ORIGINAL-URL:
+X-COST-TYPE:free
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/Fall-Exploring-History-Luncheons--Web_Facebook-Post_fRuo.jpg
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:History,Lecture,Food/Drinks,Paid,Free,Family Friendly
+ ,Special Event,Registration Required
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:0392b3ed-5d38-4854-9bbd-de1ff8d83694-time.ly
+DTSTAMP:20261105T055827Z
+CATEGORIES;LANGUAGE=en-US:Event,Program
+CONTACT:Neighborhood Services
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/Seminar_Supp
+ ers_Q9jI.jpg' /></div><p>On the 4th Tuesday of every month\, Neighborhood 
+ Services invites members of the Community to hear from those working with 
+ various departments across the City. This serves as an opportunity for mem
+ bers of the community to have conversations and learn about City operation
+ s – while promoting City operations and services. Previous presentations h
+ ave included an update on capital projects\, the City’s budget\, emergency
+  management programs\, and various others.</p>\n<p>RSVP’s to each Seminar 
+ Supper will open on the first day of each month and close the Wednesday be
+ fore the Supper takes place. Topics can be found via the Neighborhood News
+ letter\, which you can to subscribe to <a href='https://visitor.r20.consta
+ ntcontact.com/manage/optin?v=001bSIgoTcShKi4sAL4mA8wuZOkVBpj1cYHOC-peGrls8
+ uXiX7HPIYgxk01tELYvUZrf6ggNflpFlfjGHijAb2cBCwKz59GlOd2H5wcDR39GYQ%3D' rel=
+ 'nofollow noreferrer noopener' target='_blank'>here</a>\, or on the City o
+ f College Station’s Calendar.</p>\n<p><span style='font-size:12pt\;'><a hr
+ ef='https://airtable.com/appXrenPOgMpfJqUH/shriHL0sj7LEiakBa' rel='nofollo
+ w noreferrer noopener' target='_blank'><span style='text-decoration:underl
+ ine\;'><strong>Register for Seminar Supper</strong></span></a></span><br /
+ ><br />If you would like to make suggestions for topic ideas for future Se
+ minar Suppers\, please let us know at <a href='mailto:NeighborhoodServices
+ @cstx.gov'>NeighborhoodServices@cstx.gov</a>.</p>
+DTSTART;TZID=CST6CDT:20261117T180000
+DTEND;TZID=CST6CDT:20261117T200000
+GEO:+30.621293;-96.326046
+LOCATION:College Station City Hall @ 1101 Texas Avenue\, College Station\, 
+ Texas\, 77840\, United States
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Seminar Supper
+URL:https://events.timely.fun/yl7pe679/event/seminar-supper-10?instance_id=
+ 20261117180000
+X-ORIGINAL-URL:
+X-COST-TYPE:free
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/Seminar_Suppers_Q9jI.jpg
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Food/Drinks,Lecture
+X-CUSTOM-FILTER:Room:Bush 4141 Community Room
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:c241bcc7-c1ee-4420-8dad-9a27a3690565-time.ly
+DTSTAMP:20261105T055828Z
+CATEGORIES;LANGUAGE=en-US:Event
+CONTACT:Planning & Development Services
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/BannerHarvey
+ Road_Vp0e.png' /></div><p>What could the Harvey District look like in the 
+ future? Join us for an interactive workshop to explore different ways the 
+ district could change\, including options for redevelopment\, housing\, tr
+ ansportation\, and public spaces. Building on community input and what we’
+ ve learned about the district\, we’ll compare possible scenarios and discu
+ ss each option's opportunities and trade-offs. Share what you like\, what 
+ concerns you\, and which ideas you think should move forward. Your feedbac
+ k will help shape the draft recommendations for the Harvey District Plan. 
+ The scenarios are options for discussion\, not final proposals.</p>
+DTSTART;TZID=CST6CDT:20261118T180000
+DTEND;TZID=CST6CDT:20261118T235959
+GEO:+30.620365;-96.324933
+LOCATION:Visit College Station @ 1207 Texas Avenue\, College Station\, Texa
+ s\, 77840\, United States
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Harvey Road Community Scenarios Workshop
+URL:https://events.timely.fun/yl7pe679/event/harvey-road-community-scenario
+ s-workshop?instance_id=20261118180000
+X-ORIGINAL-URL:
+X-COST-TYPE:free
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/BannerHarveyRoad_Vp0e.png
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Informational
+X-INSTANT-EVENT:1
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:5e34a055-6e44-4e7e-826b-a61ac2dff665-time.ly
+DTSTAMP:20261105T055827Z
+CATEGORIES;LANGUAGE=en-US:Event
+CONTACT:Neighborhood Services
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/Seminar_Supp
+ ers_Q9jI.jpg' /></div><p>Wondering how your neighborhood\, favorite corrid
+ ors\, or community gathering spaces came to be\, or how they might change 
+ in the future? Join the Long-Range Planning team from the Planning and Dev
+ elopment Services Department to learn the ins and outs of small area plann
+ ing!<br /><br />December's Seminar Summer will be a behind-the-scenes look
+  at how planners identify focus areas\, engage the public\, develop plan c
+ oncepts\, and guide long-term implementation. The evening will conclude wi
+ th a Q&A session\, where participants are encouraged to ask questions abou
+ t this powerful tool used to shape the future of our city.<br /><br />Smal
+ l area plans influence everything from walkability and public spaces to re
+ development opportunities\, transportation choices\, and the character of 
+ our neighborhoods. As this Seminar Supper\, the planning team will walk yo
+ u through:</p>\n<ol>\n<li>What small area planning is and why it matters</
+ li>\n<li>How places like Northeast Gateway are being reimagined</li>\n<li>
+ How residents and stakeholders play a key role in shaping each plan</li>\n
+ <li>Real examples of how community voices have inspired past projects</li>
+ \n<li>What's coming next and how YOU can get involved</li>\n</ol>\n<p>Whet
+ her you're a long-time resident\, a business owner\, a student\, or just s
+ omeone who cares about how College Station grows\, this is a chance to lea
+ rn and ask questions in a relaxed\, friendly setting.<br /><br />Come enjo
+ y supper\, meet the planners helping to guide our city's future\, and disc
+ over how your voice can shape the places we all love. We hope to see you t
+ here!</p>\n<p>To register for a Seminar Supper\, please follow this link: 
+ <a href='https://airtable.com/appXrenPOgMpfJqUH/shrDUULT6pX7J5zqf' rel='no
+ follow noreferrer noopener' target='_blank'>https://airtable.com/appXrenPO
+ gMpfJqUH/shrDUULT6pX7J5zqf </a></p>
+DTSTART;TZID=CST6CDT:20251208T180000
+DTEND;TZID=CST6CDT:20251208T200000
+GEO:+30.621293;-96.326046
+LOCATION:College Station City Hall @ 1101 Texas Avenue\, College Station\, 
+ Texas\, 77840\, United States
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Seminar Suppers - The Ins and Outs of Small Area Planning
+URL:https://events.timely.fun/yl7pe679/event/seminar-suppers-10?instance_id
+ =20251208180000
+X-ORIGINAL-URL:
+X-COST-TYPE:free
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/Seminar_Suppers_Q9jI.jpg
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Seminar Supper,Free,Food/Drinks
+X-CUSTOM-FILTER:Room:Bush 4141 Community Room
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:244827ef-eee3-4b1c-afd4-f43b2d7d45df-time.ly
+DTSTAMP:20261105T055827Z
+CATEGORIES;LANGUAGE=en-US:Event
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/Facebook%20E
+ vents_Cyyk.png' /></div><p>Enjoy a dazzling display of more than one milli
+ on Christmas lights at Stephen C. Beachy Central Park! Lights will be on N
+ ov. 26–Jan. 1 each night from 6–11 p.m. Admission is free\, and parking is
+  available in the park.</p>\n<p>As you stroll or drive through the park\, 
+ be sure to tune in to Willy 97.7 FM to enjoy Christmas music provided by B
+ ryan Broadcasting.</p>\n<p>Children can send letters to Santa using the No
+ rth Pole mailbox outside the Parks and Recreation Administrative Office. L
+ etters will be accepted Nov. 26–Dec. 24.</p>\n<p><strong>The park will be 
+ closed to vehicles on Dec. 5 as preparations are made for the Christmas in
+  the Park event.</strong> The drive-thru closes at 7 a.m. to keep everyone
+  safe during setup for visits with Santa\, hayrides\, and plenty of cookie
+ s and hot cocoa.</p>\n<p>For more information\, visit <a href='https://www
+ .cstx.gov//christmas' rel='nofollow noreferrer noopener' target='_blank'>c
+ stx.gov/Christmas</a> or call 979.764.3486.</p>
+DTSTART;TZID=CST6CDT:20261126T180000
+DTEND;TZID=CST6CDT:20261126T230000
+GEO:+30.610326;-96.295347
+LOCATION:Stephen C. Beachy Central Park @ 1000 Krenek Tap Road\, College St
+ ation\, Texas\, 77840\, United States
+RDATE;TZID=CST6CDT:20261127T180000
+RDATE;TZID=CST6CDT:20261128T180000
+RDATE;TZID=CST6CDT:20261129T180000
+RDATE;TZID=CST6CDT:20261130T180000
+RDATE;TZID=CST6CDT:20261201T180000
+RDATE;TZID=CST6CDT:20261202T180000
+RDATE;TZID=CST6CDT:20261203T180000
+RDATE;TZID=CST6CDT:20261204T180000
+RDATE;TZID=CST6CDT:20261206T180000
+RDATE;TZID=CST6CDT:20261207T180000
+RDATE;TZID=CST6CDT:20261208T180000
+RDATE;TZID=CST6CDT:20261209T180000
+RDATE;TZID=CST6CDT:20261210T180000
+RDATE;TZID=CST6CDT:20261211T180000
+RDATE;TZID=CST6CDT:20261212T180000
+RDATE;TZID=CST6CDT:20261213T180000
+RDATE;TZID=CST6CDT:20261214T180000
+RDATE;TZID=CST6CDT:20261215T180000
+RDATE;TZID=CST6CDT:20261216T180000
+RDATE;TZID=CST6CDT:20261217T180000
+RDATE;TZID=CST6CDT:20261218T180000
+RDATE;TZID=CST6CDT:20261219T180000
+RDATE;TZID=CST6CDT:20261220T180000
+RDATE;TZID=CST6CDT:20261221T180000
+RDATE;TZID=CST6CDT:20261222T180000
+RDATE;TZID=CST6CDT:20261223T180000
+RDATE;TZID=CST6CDT:20261224T180000
+RDATE;TZID=CST6CDT:20261225T180000
+RDATE;TZID=CST6CDT:20261226T180000
+RDATE;TZID=CST6CDT:20261227T180000
+RDATE;TZID=CST6CDT:20261228T180000
+RDATE;TZID=CST6CDT:20261229T180000
+RDATE;TZID=CST6CDT:20261230T180000
+RDATE;TZID=CST6CDT:20261231T180000
+RDATE;TZID=CST6CDT:20270101T180000
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Christmas in the Park: Lights On
+URL:https://events.timely.fun/yl7pe679/event/christmas-in-the-park-lights-o
+ n-2?instance_id=20261126180000
+X-ORIGINAL-URL:
+X-COST-TYPE:free
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/Facebook%20Events_Cyyk.png
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Family Friendly,Parks,Free,Community Event
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:bf51f056-1eb7-4f8b-9b92-ad31e19a03b8-time.ly
+DTSTAMP:20261105T055827Z
+CATEGORIES;LANGUAGE=en-US:Program,Event
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/YogaInThePar
+ k-FBevent_jQ5v.jpg' /></div><p>Start the morning with a free\, peaceful yo
+ ga session for those 18 and older at the Meyer Senior and Community Center
+  patio. This welcoming community class is open to all experience levels an
+ d includes guided breathing\, gentle warmups\, and variations of Sun Salut
+ ation A and B with helpful modifications.</p>\n<p>Whether new to yoga or a
+  seasoned yogi\, attendees can enjoy connecting with body\, mind\, and com
+ munity. Yoga mats are available while supplies last. Dogs are not allowed.
+ <br /><br />For more information\, contact the Meyer Senior and Community 
+ Center at 979.764.2670.</p>
+DTSTART;TZID=CST6CDT:20260822T080000
+DTEND;TZID=CST6CDT:20260822T090000
+GEO:+30.615129;-96.305454
+LOCATION:Meyer Senior & Community Center @ 2275 Dartmouth Street\, College 
+ Station\, Texas\, 77840\, United States
+RDATE;TZID=CST6CDT:20260912T080000
+RDATE;TZID=CST6CDT:20260926T080000
+RDATE;TZID=CST6CDT:20261010T080000
+RDATE;TZID=CST6CDT:20261024T080000
+RDATE;TZID=CST6CDT:20261107T080000
+RDATE;TZID=CST6CDT:20261121T080000
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Yoga in the Park
+URL:https://events.timely.fun/yl7pe679/event/yoga-in-the-park-4?instance_id
+ =20260822080000
+X-ORIGINAL-URL:
+X-COST-TYPE:free
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/YogaInThePark-FBevent_jQ5v.jpg
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Adult (18+),Fitness,Free,Nature,Parks,Senior (55+)
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:d010daf1-be72-4c6c-9c26-f50c28858297-time.ly
+DTSTAMP:20261105T055827Z
+CATEGORIES;LANGUAGE=en-US:Event
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/FB-Event_QlN
+ a.jpg' /></div><p>Enjoy tasty bites from local food trucks\, live music an
+ d yard games at the Wolf Pen Creek Festival Site. Admission is free\, and 
+ food is available for purchase. Pets\, alcohol and glass containers are no
+ t allowed. Free parking is available at the Meyer Senior and Community Cen
+ ter and Post Oak Mall.</p>\n<p>Check Facebook (<a href='https://www.facebo
+ ok.com/CSTXparks/' rel='nofollow noreferrer noopener' target='_blank'>/CST
+ Xparks</a>) and Instagram (<a href='https://www.instagram.com/cstxparks/' 
+ rel='nofollow noreferrer noopener' target='_blank'>@CSTXparks</a>) the Mon
+ day before each event for the list of food trucks.<br /><br />For more inf
+ ormation\, contact the Parks and Recreation Administrative Office at 979.7
+ 64.3486. </p>
+DTSTART;TZID=CST6CDT:20260909T170000
+DTEND;TZID=CST6CDT:20260909T200000
+GEO:+30.618187;-96.304144
+LOCATION:Wolf Pen Creek Park @ 1015 Colgate Drive\, College Station\, Texas
+ \, 77840\, United States
+RDATE;TZID=CST6CDT:20260923T170000
+RDATE;TZID=CST6CDT:20261014T170000
+RDATE;TZID=CST6CDT:20261028T170000
+RDATE;TZID=CST6CDT:20261111T170000
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Food Truck Wednesday
+URL:https://events.timely.fun/yl7pe679/event/food-truck-wednesday-9?instanc
+ e_id=20260909170000
+X-ORIGINAL-URL:
+X-COST-TYPE:free
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/FB-Event_QlNa.jpg
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Special Event,Family Friendly,Food/Drinks,Games,Music
+ ,Parks
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:cfd2f9b6-298e-42ac-8f02-f4f6da381b0a-time.ly
+DTSTAMP:20261105T055827Z
+CATEGORIES;LANGUAGE=en-US:Event
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/a8b0cc53-fa2
+ b-43e5-b5fc-f5aedeb302c5_erzB.jpg' /></div><p>A quiet\, inclusive swim tim
+ e at Cindy Hallaran Pool for individuals and families who prefer a calmer 
+ environment. Music is lowered and lifeguard whistles are used only in emer
+ gencies\, allowing participants to swim\, play and socialize at their own 
+ pace. Coast Guard-approved life vests are allowed and available for use.</
+ p>\n<p>Admission is $4 per person. Ages 12 and under are free.</p>\n<p>For
+  more information\, contact Cindy Hallaran Pool at 979.764.3787.</p>
+DTSTART;TZID=CST6CDT:20260612T170000
+DTEND;TZID=CST6CDT:20260612T190000
+GEO:+30.578827;-96.298689
+LOCATION:Cindy Hallaran Pool @ 1600 Rock Prairie Road\, College Station\, T
+ exas\, 77845\, United States
+RDATE;TZID=CST6CDT:20260717T170000
+RDATE;TZID=CST6CDT:20260807T170000
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Sensory-Friendly Swim Night
+URL:https://events.timely.fun/yl7pe679/event/sensory-friendly-swim-night?in
+ stance_id=20260612170000
+X-ORIGINAL-URL:
+X-COST-TYPE:free
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/a8b0cc53-fa2b-43e5-b5fc-f5aedeb302c5_erzB.jpg
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Youth,Adult (18+),Family Friendly,Paid,Parks
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:6950ce7c-dccd-47f8-9de1-3a3f37da22dd-time.ly
+DTSTAMP:20261105T055827Z
+CATEGORIES;LANGUAGE=en-US:Program
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/aaccd834-55c
+ 8-49ca-85ff-c6cf41387d7b_H7oO.jpg' /></div><p>Dance\, sweat and have fun a
+ s an instructor guides you through lively\, Latin-inspired moves designed 
+ to boost your fitness and mood. This class is open to ages 16 and older of
+  all fitness levels\, from beginners to seasoned dancers. Admission is fre
+ e.</p>\n<p>The class will be held outdoors at the W.A. Tarrow Pavilion\, a
+ djacent to the Lincoln Recreation Center. In case of inclement weather\, i
+ t will move indoors. Participants are encouraged to bring a water bottle.<
+ /p>\n<p>For more information\, call the Lincoln Recreation Center at 979.7
+ 64.3779.</p>
+DTSTART;TZID=CST6CDT:20260905T093000
+DTEND;TZID=CST6CDT:20260905T103000
+GEO:+30.597915;-96.332834
+LOCATION:W.A. Tarrow Pavilion @ 107 Holleman Drive\, College Station\, Texa
+ s\, 77840\, United States
+RDATE;TZID=CST6CDT:20261003T093000
+RDATE;TZID=CST6CDT:20261107T093000
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Grooze Zumba
+URL:https://events.timely.fun/yl7pe679/event/grooze-zumba-3?instance_id=202
+ 60905093000
+X-ORIGINAL-URL:
+X-COST-TYPE:free
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/aaccd834-55c8-49ca-85ff-c6cf41387d7b_H7oO.jpg
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Adult (18+),Fitness,Parks,Dance,Health,Free
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:1f0b9cc2-5c77-4440-b778-da7e56503e3b-time.ly
+DTSTAMP:20261105T055827Z
+CATEGORIES;LANGUAGE=en-US:Event
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/25_0065-Game
+ s-of-Texas-FBX-Post_0Ssy.jpg' /></div><p>The <a href='https://taaf.com/gam
+ esoftexas/' rel='nofollow noreferrer noopener' target='_blank'>2026 Summer
+  Games of Texa</a>s will return to premier venues across College Station a
+ nd Bryan for the ninth time from July 30-Aug. 2.<br /><br />The annual ath
+ letic festival is managed by the Texas Amateur Athletic Federation (TAAF) 
+ and will be hosted by the cities of College Station and Bryan\, along with
+  Texas A&M University. <br /><br />Thousands of athletes\, coaches and spe
+ ctators will be in town for the Olympic-style festival\, providing a signi
+ ficant economic boost and strengthening the community’s reputation as a to
+ p destination for sports tourism.<br /><br />Texans of all ages and skill 
+ levels can compete. The schedule features opening ceremonies at Legends Ev
+ ent Center and competitions in archery\, boxing\, futsal\, golf\, horsesho
+ es\, pickleball\, soccer\, swimming\, taekwondo\, tennis\, track and field
+ \, and ultimate Frisbee.<br /><br /><strong>Want to get involved?</strong>
+ <br />Registration begins April 6 at <a href='https://taaf.com/gamesoftexa
+ s/' rel='nofollow noreferrer noopener' target='_blank'>taaf.com/GamesOfTex
+ as</a>. Some eligibility restrictions apply\, and registration deadlines v
+ ary by sport.</p>\n<p>For more information\, call the Parks and Recreation
+  Administrative Office at 979.764.3486.</p>
+DTSTART;VALUE=DATE:20260730
+DTEND;VALUE=DATE:20260803
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:2026 TAAF Games of Texas
+URL:https://events.timely.fun/yl7pe679/event/2026-games-of-texas?instance_i
+ d=20260730000000
+X-ORIGINAL-URL:
+X-COST-TYPE:free
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/25_0065-Games-of-Texas-FBX-Post_0Ssy.jpg
+X-TAGS;LANGUAGE=en-US:Sports,Community Event,Family Friendly,Parks,Registra
+ tion Required,Paid
+X-FEATURED-EVENT:1
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:cd72dc5e-f72e-4079-96f0-85a146effde6-time.ly
+DTSTAMP:20261105T055828Z
+CATEGORIES;LANGUAGE=en-US:Event
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/495231297_11
+ 54469183390212_8100896500012261673_n_Wnx5.jpg' /></div><p>The Brazos Valle
+ y Veterans Memorial Board will host its annual Veterans Day Ceremony on We
+ dnesday\, Nov. 11\, at 5:30 p.m. at the American Pavilion in Veterans Park
+  and Athletic Complex.</p>\n<p>The ceremony honors military veterans throu
+ gh a program that includes readings\, performances\, and formal tributes. 
+ It will open with the “Honor Wall Roll Call\,” a reading of the names of v
+ eterans recently added to the memorial’s Wall of Honor.</p>\n<p>The progra
+ m will also feature the national anthem\, a service medley recognizing Bra
+ zos Valley heroes\, a rifle salute by the Texas A&M Corps of Cadets Ross V
+ olunteers\, and Taps. Greg Vogel\, director of the Intelligence Studies Pr
+ ogram at the Bush School and a retired Central Intelligence Agency (CIA) o
+ fficer who served in the Directorate of Operations\, will deliver the keyn
+ ote address.</p>\n<p>For more information\, visit <a href='https://www.bvv
+ m.org/annual-events/' rel='nofollow noreferrer noopener' target='_blank'>b
+ vvm.org</a>.</p>
+DTSTART;TZID=CST6CDT:20261111T173000
+DTEND;TZID=CST6CDT:20261111T190000
+GEO:+30.642272;-96.29798
+LOCATION:Veterans Park & Athletic Complex @ 3101 Harvey Road\, College Stat
+ ion\, Texas\, 77845\, United States
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Veterans Day Ceremony
+URL:https://events.timely.fun/yl7pe679/event/veterans-day-ceremony-3?instan
+ ce_id=20261111173000
+X-ORIGINAL-URL:
+X-COST-TYPE:free
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/495231297_1154469183390212_8100896500012261673_n_Wnx5.jpg
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Family Friendly,Community Event,Free,Parks,History
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:56ba3575-fd80-4335-bd9c-b88f57a4cc87-time.ly
+DTSTAMP:20261105T055828Z
+CATEGORIES;LANGUAGE=en-US:Event
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/Copy%20of%20
+ Parks%20Event%20-%20Summer%20Template%202_G3IM.png' /></div><p>Learn the b
+ asics of sewing at First Stitches: Sewing for Beginners\, a hands-on cours
+ e led by SEWN by Sisters seamstress Nancy Johnson. The class covers thread
+ ing a needle\, using a sewing machine\, understanding fabrics and completi
+ ng simple projects. No experience is needed. Participants are encouraged t
+ o bring their own sewing machine\, as access to available machines will be
+  limited.</p>\n<p>The class will be held Saturday\, Nov. 7\, from 9 a.m.–n
+ oon at the Lincoln Recreation Center. The program is for ages 16 and older
+  and costs $10 for residents and $12 for non-residents. Registration ends 
+ Monday\, Nov. 2.</p>\n<div class='btn' style='margin:0px\;padding:15px\;wi
+ dth:300px\;background-color:#223d92\;text-align:center\;border-radius:5px\
+ ;color:#ffffff\;'><a style='background-color:transparent\;line-height:inhe
+ rit\;color:#ffffff\;text-decoration-line:none\;font-weight:bold\;' href='h
+ ttps://txcollegestationweb.myvscloud.com/webtrac/web/search.html?Action=St
+ art&SubAction=&csrftoken=&category=ADULT-TEEN&=&primarycode=LRC-29' rel='n
+ ofollow noreferrer noopener' target='_blank'>Reserve Your Spot</a></div>\n
+ <p>For more information\, contact the Lincoln Recreation Center at 979.764
+ .3486.</p>
+DTSTART;TZID=CST6CDT:20261107T090000
+DTEND;TZID=CST6CDT:20261107T120000
+GEO:+30.599391;-96.331829
+LOCATION:Lincoln Recreation Center @ 1000 Eleanor Street\, College Station\
+ , Texas\, 77840\, United States
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:First Stitches: Sewing for Beginners
+URL:https://events.timely.fun/yl7pe679/event/first-stitches-sewing-for-begi
+ nners-3?instance_id=20261107090000
+X-ORIGINAL-URL:
+X-COST:$10
+X-COST-TYPE:paid
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/Copy%20of%20Parks%20Event%20-%20Summer%20Template%202_G3IM.png
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Paid,Family Friendly,Registration Required,Adult (18+
+ ),Senior (55+)
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:28411124-8f46-45c1-9f8d-e0585491b1f0-time.ly
+DTSTAMP:20261105T055828Z
+CATEGORIES;LANGUAGE=en-US:Program
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/Facebook%20E
+ vent%20Images%207_KE6W.png' /></div><p class='isSelectedEnd'>Discover how 
+ engineers use nature to design amazing things through hands-on exploration
+  and thinking activities. Designed for ages 7–12\, the class will be held 
+ Sunday\, Nov. 15\, from 2:30-4:30 p.m. at the Gary Halter Nature Center.</
+ p>\n<p>Participants will explore bio-inspired engineering with experts fro
+ m Texas A&M and nature educators while learning how ideas from the natural
+  world can inspire engineering solutions. Dress for the outdoors\, wear cl
+ osed-toe shoes and bring water.</p>\n<p>The cost is $5 for residents and $
+ 6 for non-residents. Registration is required.</p>\n<div class='btn' style
+ ='margin:0px\;padding:15px\;width:300px\;background-color:#223d92\;text-al
+ ign:center\;border-radius:5px\;color:#ffffff\;'><a style='background-color
+ :transparent\;line-height:inherit\;color:#ffffff\;text-decoration-line:non
+ e\;font-weight:bold\;' href='https://txcollegestationweb.myvscloud.com/web
+ trac/web/search.html?Action=Start&SubAction=&csrftoken=&category=YOUTH&=&p
+ rimarycode=LCN-88' rel='nofollow noreferrer noopener' target='_blank'>Rese
+ rve Your Spot</a></div>\n<p>For more information\, contact the Gary Halter
+  Nature Center at 979.764.6216.</p>
+DTSTART;TZID=CST6CDT:20261115T143000
+DTEND;TZID=CST6CDT:20261115T163000
+GEO:+30.568073;-96.211266
+LOCATION:Gary Halter Nature Center @ 13600 Rock Prairie Road\, College Stat
+ ion\, Texas\, 77845\, United States
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Walk Like an Engineer
+URL:https://events.timely.fun/yl7pe679/event/walk-like-an-engineer-5?instan
+ ce_id=20261115143000
+X-ORIGINAL-URL:
+X-COST:$5 Resident/$6 Non-Resident
+X-COST-TYPE:paid
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/Facebook%20Event%20Images%207_KE6W.png
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Nature,Parks,Registration Required,Youth,Paid
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+BEGIN:VEVENT
+UID:15e3c81e-3c40-4761-afa6-bb40ef16d3c4-time.ly
+DTSTAMP:20261105T055828Z
+CATEGORIES;LANGUAGE=en-US:Event
+CONTACT:Parks & Recreation\; 979.764.3486\; parks@cstx.gov
+DESCRIPTION:<div class='ai1ec-event-avatar alignleft timely'><img src='http
+ s://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54735353/484947580_11
+ 29380842563573_6618907612126856002_n_l11g.jpg' /></div><p>You don’t have t
+ o travel far to make lasting memories with friends and family. Spend the n
+ ight camping at Lick Creek Park on Friday\, Nov. 13. This family-friendly 
+ overnight event begins at 6 p.m. Friday and concludes at 7 a.m. Saturday.<
+ br /><br />Choose your adventure or join us for favorites\, such as a hot 
+ dog dinner\, nature presentations\, s'mores and a night hike. Learn campin
+ g basics and discover the nocturnal creatures that call Lick Creek Park ho
+ me.<br /><br />Campers must bring a tent\, supplies\, snacks\, and drinks.
+  Electricity is not provided\, so pack flashlights\, tent lanterns\, sleep
+ ing bags\, insect repellent\, and folding chairs. Children must be accompa
+ nied by an adult (18+)\, and pets are not allowed. </p>\n<p><strong>Schedu
+ le of Events</strong></p>\n<ul>\n<li>6 p.m. • Check-in and campsite set-up
+ </li>\n<li>6 p.m. • Special nature presentations\, activities\, s’mores\, 
+ and games begin</li>\n<li>7 p.m. • Hot dog dinner</li>\n<li>7:30 p.m. • Ni
+ ght hikes begin</li>\n<li>9 p.m. • Special nature presentations and night 
+ hikes end</li>\n<li>9:45 p.m. • Activities\, s’mores\, and games end</li>
+ \n<li>10 p.m. • Quiet hours begin</li>\n</ul>\n<p>The cost is $8 per perso
+ n. Space is limited\, and registration closes Wednesday\, Nov. 11.</p>\n<d
+ iv class='btn' style='margin:0px\;padding:15px\;width:300px\;background-co
+ lor:#223d92\;text-align:center\;border-radius:5px\;color:#ffffff\;'><a sty
+ le='background-color:transparent\;line-height:inherit\;color:#ffffff\;text
+ -decoration-line:none\;font-weight:bold\;' href='https://txcollegestationw
+ eb.myvscloud.com/webtrac/web/search.html?Action=Start&SubAction=&csrftoken
+ =&category=EVENTS&=&primarycode=LCN-41' rel='nofollow noreferrer noopener'
+  target='_blank'>Reserve Your Spot</a></div>\n<p>For more information\, co
+ ntact the Gary Halter Nature Center at 979.764.6216.</p>
+DTSTART;TZID=CST6CDT:20261113T180000
+DTEND;TZID=CST6CDT:20261114T070000
+GEO:+30.568073;-96.211266
+LOCATION:Gary Halter Nature Center @ 13600 Rock Prairie Road\, College Stat
+ ion\, Texas\, 77845\, United States
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Lick Creek Park in the Dark
+URL:https://events.timely.fun/yl7pe679/event/lick-creek-park-in-the-dark-10
+ ?instance_id=20261113180000
+X-ORIGINAL-URL:
+X-COST:$8
+X-COST-TYPE:paid
+X-WP-IMAGES-URL:https://timelyapp-prod.s3.us-west-2.amazonaws.com/images/54
+ 735353/484947580_1129380842563573_6618907612126856002_n_l11g.jpg
+X-LOCATION:'TP=P'
+X-TAGS;LANGUAGE=en-US:Family Friendly,Registration Required,Nature,Parks,Sp
+ ecial Event,Paid
+X-CUSTOM-FILTER:Type:Public
+END:VEVENT
+END:VCALENDAR

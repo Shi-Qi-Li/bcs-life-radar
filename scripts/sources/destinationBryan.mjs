@@ -7,8 +7,8 @@
 // "startDate":"2026-11-11T19:00:00.000000Z" on a page whose visible text says "7:00 PM – 10:30 PM".
 // The "Z" is wrong (it is Central wall time), while other pages use a correct "-06:00" offset.
 
-import { chicagoToUtc, startOfDay, keyFromYmd } from '../../public/js/shared/time.js';
-import { htmlToText, decodeEntities, truncate, costFromText, registrationFrom, extractLinks, slug } from '../lib/normalize.mjs';
+import { chicagoToUtc, startOfDay, keyFromYmd, dowOfKey } from '../../public/js/shared/time.js';
+import { htmlToText, decodeEntities, truncate, costFromText, registrationFrom, extractLinks, slug, cleanDescription, nameSimilarity } from '../lib/normalize.mjs';
 import { classify } from '../../public/js/shared/taxonomy.js';
 
 export const SOURCE = {
@@ -97,6 +97,48 @@ function parseUpcoming(listHtml, base) {
   return out;
 }
 
+/** Tidy a published street address: ", 505 W 31st St." → "505 W 31st St.", "930North Rosemary Drive" → "930 North Rosemary Drive". */
+export function tidyAddress(s) {
+  if (!s) return s || '';
+  return String(s).replace(/^[\s,]+/, '').replace(/(\d)([A-Z][a-z])/g, '$1 $2').replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
+}
+
+/** Venue named by the title's trailing "at <Venue>" ("Battle for Bryan at The Hilton Garden Inn"), or null. */
+export function venueFromTitle(title) {
+  const m = [...String(title || '').matchAll(/\s+at\s+/gi)].pop();
+  if (!m) return null;
+  const v = title.slice(m.index + m[0].length).trim().replace(/[.!]+$/, '');
+  return /^(the\s+)?[A-Z0-9]/.test(v) && v.length >= 3 && v.length <= 60 && !/[:?]/.test(v) ? v : null;
+}
+
+/** Venue named by "Located in/at <Place>" in the description, or null. */
+export function venueFromDescription(description) {
+  const m = /\b[Ll]ocated (?:in|at) (?:the )?([A-Z][^,.;\n]{2,60}?)(?=[,.;\n]|$)/.exec(description || '');
+  return m ? m[1].trim() : null;
+}
+
+const DOW_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const DAY_WORD = '(?:mon|tues?|wednes|thurs?|fri|satur|sun)day';
+const EVERY_DAY_RE = new RegExp(`\\bevery (?:other )?(${DAY_WORD}s?(?:(?:,| and| &|/) ?(?:${DAY_WORD})s?)*)`, 'i');
+/** A caveat when the description's "every Thursday" disagrees with the weekday every listed date falls on. */
+export function weekdayNote(description, days) {
+  const m = EVERY_DAY_RE.exec(description || '');
+  if (!m || !days.length) return null;
+  const said = new Set([...m[1].matchAll(new RegExp(DAY_WORD, 'gi'))].map((x) => DOW_NAMES.findIndex((n) => n.toLowerCase().startsWith(x[0].toLowerCase().slice(0, 3)))));
+  const listed = new Set(days.map((x) => dowOfKey(keyFromYmd(x.y, x.m, x.d))));
+  if (listed.size !== 1) return null; // dates on mixed weekdays: nothing definite to compare against
+  const [dow] = listed;
+  if (said.has(dow)) return null;
+  return `Listed dates are ${DOW_NAMES[dow]}s but the description says every ${[...said].map((i) => DOW_NAMES[i]).join(' and ')} — confirm with the venue`;
+}
+
+/** First sentence of a description that quotes a price, preferring a real price over a "$5 off" discount. */
+export function priceSentence(description) {
+  const withPrice = String(description || '').split(/(?<=[.!?])\s+|\n+/).map((s) => s.trim()).filter((s) => /\$\d/.test(s));
+  const best = withPrice.find((s) => !/\$\s?\d+(?:\.\d+)?\s*off\b/i.test(s)) || withPrice[0];
+  return best ? truncate(best, 160) : null;
+}
+
 /** Parse an event page. Returns a "series" description or { skip: reason }. */
 export function parseDetail(html, url) {
   let ld = null;
@@ -120,7 +162,7 @@ export function parseDetail(html, url) {
   const ticketUrl = (/href="([^"]+)"[^>]*data-dms-event-detail-booking-click/.exec(html) || /data-dms-event-detail-booking-click[^>]*href="([^"]+)"/.exec(html) || [])[1];
   const websiteMatch = /<a\s+href="(https?:[^"]+)"[^>]*>(?:(?!<\/a>)[\s\S])*?Website<\/a>/.exec(html);
   const summaryHtml = (/<div class="detail__summary[^"]*"[^>]*>([\s\S]*?)<\/div>/.exec(html) || [])[1] || '';
-  const description = htmlToText(summaryHtml) || ld?.description || '';
+  const description = cleanDescription(htmlToText(summaryHtml) || ld?.description || '');
   const upcomingHtml = (/<ul class="[^"]*detail__dates[^"]*">([\s\S]*?)<\/ul>/.exec(html) || [])[1];
   const upcoming = upcomingHtml ? parseUpcoming(upcomingHtml, dates[0]) : [];
 
@@ -128,7 +170,7 @@ export function parseDetail(html, url) {
   const categories = [...new Set([...html.matchAll(/data-dms-category-name="([^"]*)"/g)].map((x) => decodeEntities(x[1])).filter(Boolean))];
 
   const addr = ld?.location?.address || {};
-  const address = [addr.streetAddress, [addr.addressLocality, addr.addressRegion === 'Texas' ? 'TX' : addr.addressRegion].filter(Boolean).join(', '), addr.postalCode]
+  const address = [tidyAddress(addr.streetAddress), [addr.addressLocality, addr.addressRegion === 'Texas' ? 'TX' : addr.addressRegion].filter(Boolean).join(', '), addr.postalCode]
     .filter(Boolean).join(', ').replace(/, (\d{5})$/, ' $1');
 
   return {
@@ -142,7 +184,9 @@ export function parseDetail(html, url) {
     ticketUrl: ticketUrl ? decodeEntities(ticketUrl) : null,
     websiteUrl: websiteMatch ? decodeEntities(websiteMatch[1]) : null,
     links: extractLinks(summaryHtml),
-    location: { name: ld?.location?.name ? decodeEntities(ld.location.name) : null, address: address || null },
+    // The site sometimes publishes an address with no venue name; the title ("… at The Hilton Garden Inn")
+    // or the description ("Located in Midtown Park, …") then names it.
+    location: { name: ld?.location?.name ? decodeEntities(ld.location.name) : venueFromTitle(title) || venueFromDescription(description), address: address || null },
     lat,
     lng,
     categories,
@@ -153,16 +197,23 @@ export function parseDetail(html, url) {
 export function itemsFromDetail(d, card, { fromMs, toMs, fetchedAt }) {
   const [t1, t2] = d.times;
   const mk = (day, t) => chicagoToUtc(day.y, day.m, day.d, t.hh, t.mm);
+  const key = (x) => keyFromYmd(x.y, x.m, x.d);
   const categories = [...new Set([...(card?.categories || []), ...(d.categories || [])])];
+  const description = cleanDescription(d.description || '');
+  let cost = costFromText(d.admission);
+  if (cost.status === 'unknown' && !String(d.admission || '').trim() && /\$\d/.test(description)) {
+    // No admission line, but the description itself prices the activity ("Walk-On GellyBall for $30 per person").
+    cost = { status: 'paid', label: `Price in description: ${priceSentence(description)}`, min: null };
+  }
   const base = {
     seriesId: `dbryan:${slug(d.url.split('/events/')[1] || d.title)}`,
     title: d.title,
-    description: truncate(d.description, 600),
-    summary: truncate(d.description.replace(/\n/g, ' '), 200),
-    location: { ...d.location, lat: card?.lat ?? d.lat ?? null, lng: card?.lng ?? d.lng ?? null },
-    cost: costFromText(d.admission),
-    registration: registrationFrom({ description: d.description, links: d.links, ticketUrl: d.ticketUrl }),
-    types: classify({ weakTags: categories, title: d.title, description: d.description }),
+    description: truncate(description, 600),
+    summary: truncate(description.replace(/\n/g, ' '), 200),
+    location: { ...(d.location || {}), lat: card?.lat ?? d.lat ?? null, lng: card?.lng ?? d.lng ?? null },
+    cost,
+    registration: registrationFrom({ description, links: d.links, ticketUrl: d.ticketUrl }),
+    types: classify({ weakTags: categories, title: d.title, description }),
     sourceTags: categories,
     contact: null,
     websiteUrl: d.websiteUrl,
@@ -172,6 +223,11 @@ export function itemsFromDetail(d, card, { fromMs, toMs, fetchedAt }) {
     lastVerified: fetchedAt,
   };
   if (!base.location.name && !base.location.address) base.location = null;
+  const titleVenue = venueFromTitle(d.title);
+  if (titleVenue && base.location?.name && nameSimilarity(titleVenue, base.location.name) < 0.5) {
+    // "… Expo at The Brazos Center" listed at the Brazos County Expo Complex: the page contradicts itself.
+    base.locationNote = 'Title names a different venue than the listed address — confirm';
+  }
 
   const items = [];
   const push = (startMs, endMs, extra) => {
@@ -180,13 +236,20 @@ export function itemsFromDetail(d, card, { fromMs, toMs, fetchedAt }) {
   };
   const span = (day) => {
     if (!t1) {
-      const s = startOfDay(keyFromYmd(day.y, day.m, day.d));
-      return [s, startOfDay(keyFromYmd(day.y, day.m, day.d), 1), { allDay: true, endKnown: false, timeNote: 'No time listed by source' }];
+      const s = startOfDay(key(day));
+      return [s, startOfDay(key(day), 1), { allDay: true, endKnown: false, timeNote: 'No time listed by source' }];
     }
     const s = mk(day, t1);
     let e = t2 ? mk(day, t2) : null;
     if (e !== null && e <= s) e += 24 * 3600_000; // ends after midnight
-    return [s, e, { allDay: false, endKnown: e !== null, timeNote: null }];
+    if (t1.hh === 0 && t1.mm === 0 && t2 && t2.hh >= 12) {
+      // "12:00 AM – 4:00 PM": a midnight start with an afternoon end is almost certainly a data-entry slip,
+      // so the start is treated as not listed (all-day style) while the listed end is kept.
+      return [s, e, { allDay: true, endKnown: true, timeNote: `Source lists a 12:00 AM start — likely an error; ends ${fmtTime(t2)}` }];
+    }
+    const extra = { allDay: false, endKnown: e !== null, timeNote: null };
+    if (e !== null && e - s > 14 * 3600_000) extra.timeNote = `Listed as ${Math.round((e - s) / 3600_000)} hours long (${fmtTime(t1)} – ${fmtTime(t2)}) — confirm with the venue`;
+    return [s, e, extra];
   };
 
   if (d.dates.length >= 2 && keyFromYmd(d.dates[0].y, d.dates[0].m, d.dates[0].d) !== keyFromYmd(d.dates[1].y, d.dates[1].m, d.dates[1].d)) {
@@ -203,7 +266,6 @@ export function itemsFromDetail(d, card, { fromMs, toMs, fetchedAt }) {
     return items;
   }
   // The headline date is sometimes missing from the site's own "Upcoming Dates" list, so union them.
-  const key = (x) => keyFromYmd(x.y, x.m, x.d);
   const byKey = new Map([[key(d.dates[0]), d.dates[0]], ...d.upcoming.map((x) => [key(x), x])]);
   const days = [...byKey.values()].sort((a, b) => key(a).localeCompare(key(b)));
 
@@ -220,11 +282,14 @@ export function itemsFromDetail(d, card, { fromMs, toMs, fetchedAt }) {
     return items;
   }
   const kind = days.length >= 2 ? 'recurring' : 'one-time';
+  const dowNote = weekdayNote(description, days); // "every Thursday" in the text vs Wednesdays in the list
   for (const day of days) {
     const [s, e, extra] = span(day);
+    const notes = extra.timeNote ? [extra.timeNote] : [];
     const isFirst = key(day) === key(d.dates[0]);
-    if (kind === 'recurring' && !isFirst && t1) extra.timeNote = 'Time copied from the series listing — confirm for this date';
-    push(s, e, { kind, ...extra });
+    if (kind === 'recurring' && !isFirst && t1) notes.push('Time copied from the series listing — confirm for this date');
+    if (dowNote) notes.push(dowNote);
+    push(s, e, { kind, ...extra, timeNote: notes.length ? notes.join(' · ') : null });
   }
   return items;
 }
@@ -301,7 +366,13 @@ export async function fetchSource({ fetchText, mapLimit, fromMs, toMs, concurren
     const d = r.value;
     if (d.skip) { stats.skipped[d.skip] = (stats.skipped[d.skip] || 0) + 1; return; }
     const produced = itemsFromDetail(d, card, { fromMs, toMs, fetchedAt });
-    if (!produced.length) { stats.skipped['no dates in window (ended or far future)'] = (stats.skipped['no dates in window (ended or far future)'] || 0) + 1; return; }
+    if (!produced.length) {
+      // An ended event is served as a normal page (no marker), so "every listed date is in the past" is the only signal.
+      const lastKey = [...d.dates, ...d.upcoming].map((x) => keyFromYmd(x.y, x.m, x.d)).sort().pop();
+      const why = lastKey && startOfDay(lastKey, 1) <= fromMs ? 'ended (every listed date is in the past)' : 'no dates in window (far future)';
+      stats.skipped[why] = (stats.skipped[why] || 0) + 1;
+      return;
+    }
     items.push(...produced);
   });
   // If most pages failed, treat the refresh as failed so the last good data is kept and the failure is shown.

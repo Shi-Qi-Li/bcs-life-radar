@@ -121,7 +121,7 @@
    "cost": {
     "status": "mixed",
     "label": "$8 adults | $4 kids | Free under 5",
-    "min": 4
+    "min": 8
    },
    "registration": {
     "status": "unknown",
@@ -173,8 +173,7 @@
    },
    "types": [
     "shows",
-    "outdoors",
-    "family"
+    "food"
    ],
    "sourceTags": [
     "Music",
@@ -198,7 +197,8 @@
    "alsoListedBy": [
     {
      "sourceName": "Destination Bryan (DEMO)",
-     "url": "https://www.destinationbryan.com/events/demo-lunch-concert/"
+     "url": "https://www.destinationbryan.com/events/demo-lunch-concert/",
+     "reason": "same start, similar titles (1.00)"
     }
    ]
   },
@@ -309,8 +309,8 @@
     "url": null
    },
    "types": [
-    "outdoors",
-    "fitness"
+    "fitness",
+    "outdoors"
    ],
    "sourceTags": [
     "Fitness",
@@ -336,8 +336,8 @@
    "seriesId": "cstx:demo-pottery",
    "kind": "one-time",
    "title": "[DEMO] Beginner Pottery Workshop",
-   "description": "Fictional demo workshop.\nRegister here",
-   "summary": "Fictional demo workshop. Register here",
+   "description": "Fictional demo workshop.",
+   "summary": "Fictional demo workshop.",
    "location": {
     "name": "Demo Community Center",
     "address": "400 Example St, College Station, TX 77840",
@@ -400,8 +400,7 @@
     "url": null
    },
    "types": [
-    "outdoors",
-    "family"
+    "outdoors"
    ],
    "sourceTags": [
     "Nature",
@@ -446,8 +445,7 @@
    },
    "types": [
     "community",
-    "food",
-    "family"
+    "food"
    ],
    "sourceTags": [
     "Community Event",
@@ -552,6 +550,7 @@
    "kind": "recurring",
    "allDay": false,
    "endKnown": true,
+   "timeNote": null,
    "groupKey": "demo-wednesday-open-mic"
   },
   {
@@ -617,8 +616,8 @@
     "url": null
    },
    "types": [
-    "outdoors",
-    "fitness"
+    "fitness",
+    "outdoors"
    ],
    "sourceTags": [
     "Fitness",
@@ -703,8 +702,8 @@
     "url": null
    },
    "types": [
-    "outdoors",
-    "fitness"
+    "fitness",
+    "outdoors"
    ],
    "sourceTags": [
     "Fitness",
@@ -749,8 +748,8 @@
     "url": null
    },
    "types": [
-    "outdoors",
-    "fitness"
+    "fitness",
+    "outdoors"
    ],
    "sourceTags": [
     "Fitness",
