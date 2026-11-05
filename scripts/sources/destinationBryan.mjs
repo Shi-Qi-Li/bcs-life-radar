@@ -1,6 +1,7 @@
 // Destination Bryan — https://www.destinationbryan.com/events/
-// No public feed is offered, so we read the public listing pages (allowed by robots.txt), follow
-// each card to its event page, and read the visible date/time + schema.org JSON-LD there.
+// No public feed is offered. Discovery uses the site's public event sitemap (every event page with a
+// last-modified date), with the paginated listing as a fallback; each event page is then read for the
+// visible date/time, admission, coordinates, category and schema.org JSON-LD.
 //
 // Why visible text wins over JSON-LD for times: on 2026-11-05 we observed JSON-LD such as
 // "startDate":"2026-11-11T19:00:00.000000Z" on a page whose visible text says "7:00 PM – 10:30 PM".
@@ -14,8 +15,26 @@ export const SOURCE = {
   id: 'dbryan',
   name: 'Destination Bryan',
   homepage: 'https://www.destinationbryan.com/events/',
-  method: 'Public listing pages + individual event pages (HTML and schema.org JSON-LD). No feed/API is published.',
+  sitemapUrl: 'https://www.destinationbryan.com/sitemaps-1-event-default-1-sitemap.xml',
+  method: 'Public event sitemap for discovery (listing pages as fallback), then every event page (HTML + schema.org JSON-LD). No feed/API is published.',
 };
+
+const EVENT_URL = /^https:\/\/www\.destinationbryan\.com\/events\/[a-z0-9-]+\/$/;
+// Section pages that live under /events/ but are not events.
+const NOT_EVENTS = new Set(['annual', 'submit-your-event', 'live-music', 'first-friday', 'first-friday-event-calendar']);
+
+/** Parse the event sitemap into [{url, lastmod}] (event pages only). */
+export function parseSitemap(xml) {
+  const out = [];
+  for (const m of xml.matchAll(/<url>([\s\S]*?)<\/url>/g)) {
+    const loc = decodeEntities((/<loc>\s*([^<\s]+)\s*<\/loc>/.exec(m[1]) || [])[1] || '').trim();
+    if (!EVENT_URL.test(loc)) continue;
+    if (NOT_EVENTS.has(loc.split('/events/')[1].replace(/\/$/, ''))) continue;
+    const lastmod = (/<lastmod>\s*([^<\s]+)\s*<\/lastmod>/.exec(m[1]) || [])[1] || null;
+    out.push({ url: loc, lastmod });
+  }
+  return out;
+}
 
 const MONTHS = { january: 1, february: 2, march: 3, april: 4, may: 5, june: 6, july: 7, august: 8, september: 9, october: 10, november: 11, december: 12 };
 
@@ -98,6 +117,10 @@ export function parseDetail(html, url) {
   const upcomingHtml = (/<ul class="[^"]*detail__dates[^"]*">([\s\S]*?)<\/ul>/.exec(html) || [])[1];
   const upcoming = upcomingHtml ? parseUpcoming(upcomingHtml, dates[0]) : [];
 
+  const lat = parseFloat((/data-marker-lat="([^"]*)"/.exec(html) || [])[1]);
+  const lng = parseFloat((/data-marker-lng="([^"]*)"/.exec(html) || [])[1]);
+  const categories = [...new Set([...html.matchAll(/data-dms-category-name="([^"]*)"/g)].map((x) => decodeEntities(x[1])).filter(Boolean))];
+
   const addr = ld?.location?.address || {};
   const address = [addr.streetAddress, [addr.addressLocality, addr.addressRegion === 'Texas' ? 'TX' : addr.addressRegion].filter(Boolean).join(', '), addr.postalCode]
     .filter(Boolean).join(', ').replace(/, (\d{5})$/, ' $1');
@@ -114,6 +137,9 @@ export function parseDetail(html, url) {
     websiteUrl: websiteMatch ? decodeEntities(websiteMatch[1]) : null,
     links: extractLinks(summaryHtml),
     location: { name: ld?.location?.name ? decodeEntities(ld.location.name) : null, address: address || null },
+    lat: Number.isFinite(lat) ? lat : null,
+    lng: Number.isFinite(lng) ? lng : null,
+    categories,
   };
 }
 
@@ -121,13 +147,13 @@ export function parseDetail(html, url) {
 export function itemsFromDetail(d, card, { fromMs, toMs, fetchedAt }) {
   const [t1, t2] = d.times;
   const mk = (day, t) => chicagoToUtc(day.y, day.m, day.d, t.hh, t.mm);
-  const categories = [...(card?.categories || [])];
+  const categories = [...new Set([...(card?.categories || []), ...(d.categories || [])])];
   const base = {
     seriesId: `dbryan:${slug(d.url.split('/events/')[1] || d.title)}`,
     title: d.title,
     description: truncate(d.description, 600),
     summary: truncate(d.description.replace(/\n/g, ' '), 200),
-    location: { ...d.location, lat: card?.lat ?? null, lng: card?.lng ?? null },
+    location: { ...d.location, lat: card?.lat ?? d.lat ?? null, lng: card?.lng ?? d.lng ?? null },
     cost: costFromText(d.admission),
     registration: registrationFrom({ description: d.description, links: d.links, ticketUrl: d.ticketUrl }),
     types: classify({ weakTags: categories, title: d.title, description: d.description }),
@@ -181,14 +207,25 @@ export function itemsFromDetail(d, card, { fromMs, toMs, fetchedAt }) {
   return items;
 }
 
-export async function fetchSource({ fetchText, fromMs, toMs, maxListingPages = 6, maxDetailPages = 45, log = () => {} }) {
-  const fetchedAt = new Date().toISOString();
-  const stats = { listingPages: 0, detailPages: 0, skipped: {}, notes: [] };
+/** Discover event URLs: sitemap first (complete, one request), listing pages as a fallback. */
+async function discover({ fetchText, maxListingPages, log, stats }) {
   const cardsByUrl = new Map();
+  try {
+    const entries = parseSitemap(await fetchText(SOURCE.sitemapUrl));
+    stats.sitemapUrls = entries.length;
+    if (entries.length >= 20) {
+      for (const e of entries) cardsByUrl.set(e.url, { url: e.url, lastmod: e.lastmod, categories: new Set(), lat: null, lng: null });
+      stats.discovery = 'sitemap';
+      return cardsByUrl;
+    }
+    stats.notes.push(`Sitemap listed only ${entries.length} event URLs — falling back to listing pages`);
+  } catch (e) {
+    stats.notes.push(`Sitemap unavailable (${e.message}) — falling back to listing pages`);
+  }
   let last = 1;
   for (let page = 1; page <= Math.min(maxListingPages, last); page++) {
     const html = await fetchText(`${SOURCE.homepage}?page=${page}`);
-    stats.listingPages++;
+    stats.listingPages = (stats.listingPages || 0) + 1;
     const { cards, lastPage } = parseListing(html);
     if (page === 1) {
       if (!cards.length) throw new Error('Listing page had no event cards (layout may have changed)');
@@ -199,21 +236,36 @@ export async function fetchSource({ fetchText, fromMs, toMs, maxListingPages = 6
       if (prev) { for (const x of c.categories) prev.categories.add(x); } else cardsByUrl.set(c.url, c);
     }
   }
+  stats.discovery = 'listing';
   stats.totalListingPages = last;
+  if (last > maxListingPages) stats.notes.push(`Listing fallback read ${maxListingPages} of ${last} pages — coverage is partial`);
+  return cardsByUrl;
+}
+
+export async function fetchSource({ fetchText, mapLimit, fromMs, toMs, concurrency = 3, maxListingPages = 8, maxDetailPages = 400, log = () => {} }) {
+  const fetchedAt = new Date().toISOString();
+  const stats = { discovery: null, sitemapUrls: 0, detailPages: 0, failedPages: 0, skipped: {}, notes: [] };
+  const cardsByUrl = await discover({ fetchText, maxListingPages, log, stats });
+  let cards = [...cardsByUrl.values()];
+  if (cards.length > maxDetailPages) { stats.notes.push(`Stopped after ${maxDetailPages} of ${cards.length} event pages`); cards = cards.slice(0, maxDetailPages); }
+  stats.discovered = cards.length;
+
+  const results = await mapLimit(cards, concurrency, async (card) => {
+    const html = await fetchText(card.url);
+    return parseDetail(html, card.url);
+  });
   const items = [];
-  let n = 0;
-  for (const card of cardsByUrl.values()) {
-    if (n++ >= maxDetailPages) { stats.notes.push(`Stopped after ${maxDetailPages} event pages`); break; }
-    try {
-      const html = await fetchText(card.url);
-      stats.detailPages++;
-      const d = parseDetail(html, card.url);
-      if (d.skip) { stats.skipped[d.skip] = (stats.skipped[d.skip] || 0) + 1; continue; }
-      items.push(...itemsFromDetail(d, card, { fromMs, toMs, fetchedAt }));
-    } catch (e) {
-      stats.notes.push(`${card.url}: ${e.message}`);
-      log(`  ! ${card.url}: ${e.message}`);
-    }
+  results.forEach((r, i) => {
+    const card = cards[i];
+    if (!r.ok) { stats.failedPages++; stats.notes.push(`${card.url}: ${r.error.message}`); log(`  ! ${card.url}: ${r.error.message}`); return; }
+    stats.detailPages++;
+    const d = r.value;
+    if (d.skip) { stats.skipped[d.skip] = (stats.skipped[d.skip] || 0) + 1; return; }
+    items.push(...itemsFromDetail(d, card, { fromMs, toMs, fetchedAt }));
+  });
+  // If most pages failed, treat the refresh as failed so the last good data is kept and the failure is shown.
+  if (cards.length && stats.failedPages > cards.length / 2) {
+    throw new Error(`${stats.failedPages} of ${cards.length} event pages could not be read`);
   }
   stats.items = items.length;
   return { items, stats, fetchedAt };

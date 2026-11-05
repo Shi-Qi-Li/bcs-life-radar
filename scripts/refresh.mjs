@@ -23,18 +23,33 @@ const DELAY = +(process.env.REQUEST_DELAY_MS ?? 1000);
 const CACHE_DIR = process.env.HTTP_CACHE_DIR || null; // dev only: reuse downloaded pages
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-let lastReq = 0;
+
+// Global pacing gate: request *starts* are spaced DELAY ms apart across all callers, even when a
+// source fetches several pages concurrently. Slots are reserved synchronously, so concurrent callers
+// never collide on the same slot.
+let nextSlot = 0;
+async function reserveSlot() {
+  const now = Date.now();
+  const at = Math.max(now, nextSlot);
+  nextSlot = at + DELAY;
+  if (at > now) await sleep(at - now);
+}
+
 export async function politeFetchText(url, { tries = 2 } = {}) {
   const cacheFile = CACHE_DIR && join(CACHE_DIR, createHash('sha1').update(url).digest('hex'));
   if (cacheFile) { try { return await readFile(cacheFile, 'utf8'); } catch { /* miss */ } }
   for (let attempt = 1; ; attempt++) {
-    const wait = lastReq + DELAY - Date.now();
-    if (wait > 0) await sleep(wait);
-    lastReq = Date.now();
+    await reserveSlot();
     try {
-      const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'text/html,text/calendar,*/*' }, redirect: 'follow', signal: AbortSignal.timeout(45_000) });
+      const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'text/html,text/calendar,application/xml,*/*' }, redirect: 'follow', signal: AbortSignal.timeout(45_000) });
       // Respect access restrictions: never retry or work around 401/403.
       if (res.status === 401 || res.status === 403) throw Object.assign(new Error(`HTTP ${res.status} (access restricted — not retrying)`), { fatal: true });
+      if (res.status === 429) {
+        // Being asked to slow down: back off for the whole process, then retry once.
+        const retryAfter = Math.min(60, +(res.headers.get('retry-after') || 10)) * 1000;
+        nextSlot = Math.max(nextSlot, Date.now() + retryAfter);
+        throw new Error('HTTP 429 (rate limited)');
+      }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const text = await res.text();
       if (cacheFile) { await mkdir(CACHE_DIR, { recursive: true }); await writeFile(cacheFile, text); }
@@ -44,6 +59,35 @@ export async function politeFetchText(url, { tries = 2 } = {}) {
       await sleep(2000 * attempt);
     }
   }
+}
+
+/** Run `fn` over `items` with at most `limit` in flight; results in order; errors are returned, not thrown. */
+export async function mapLimit(items, limit, fn) {
+  const out = new Array(items.length);
+  let next = 0;
+  const worker = async () => {
+    while (next < items.length) {
+      const i = next++;
+      try { out[i] = { ok: true, value: await fn(items[i], i) }; } catch (e) { out[i] = { ok: false, error: e }; }
+    }
+  };
+  await Promise.all(Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, worker));
+  return out;
+}
+
+/**
+ * The last good data set, used to keep a source's items when its refresh fails.
+ * PREV_URL (the live site's events.json) wins when set, so a scheduled job never has to commit data;
+ * otherwise the local file is used.
+ */
+async function loadPrevious(fetchText, log) {
+  if (process.env.PREV_URL) {
+    try {
+      const prev = JSON.parse(await fetchText(process.env.PREV_URL));
+      if (prev?.items) { log(`Previous data: ${process.env.PREV_URL} (generated ${prev.generatedAt})`); return prev; }
+    } catch (e) { log(`Previous data not available from PREV_URL (${e.message}); trying the local file`); }
+  }
+  try { return JSON.parse(await readFile(DEFAULT_OUT, 'utf8')); } catch { return null; }
 }
 
 /** Expiry + dedupe + groupKey. Shared by refresh, demo-data builder and tests. */
@@ -57,13 +101,18 @@ export function finalizeItems(all, now) {
 
 export async function refresh({
   now = Date.now(), log = console.log, sources = [cstx, dbryan, places], fetchText = politeFetchText,
-  days = +(process.env.DAYS || 30), prev, outPath = DEFAULT_OUT, write = true,
+  days = +(process.env.DAYS || 30), prev, outPath = process.env.OUT || DEFAULT_OUT, write = true,
 } = {}) {
-  if (prev === undefined) { try { prev = JSON.parse(await readFile(outPath, 'utf8')); } catch { prev = null; } }
+  if (prev === undefined) prev = await loadPrevious(fetchText, log);
   const today = dayKey(now);
   const fromMs = startOfDay(today);
   const toMs = startOfDay(today, days + 1);
-  const ctx = { fetchText, fromMs, toMs, log, maxListingPages: +(process.env.BRYAN_PAGES || 6), maxDetailPages: +(process.env.BRYAN_DETAILS || 45) };
+  const ctx = {
+    fetchText, mapLimit, fromMs, toMs, log,
+    concurrency: +(process.env.CONCURRENCY || 3),
+    maxListingPages: +(process.env.BRYAN_PAGES || 8),
+    maxDetailPages: +(process.env.BRYAN_DETAILS || 400),
+  };
 
   const all = [];
   const sourceMeta = [];
