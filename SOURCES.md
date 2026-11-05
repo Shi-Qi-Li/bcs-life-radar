@@ -37,6 +37,20 @@ Verified on **2026-11-05** by inspecting each page and following links to indivi
 - **Update method:** each refresh re-downloads every page and checks that the copied snippets (hours, address) still appear. If not, the card shows "Hours may have changed". If the page can't be reached, the card shows the date the hours were last verified.
 - Known limitations: small set. Closure dates appear on the source without a year and are interpreted for 2026–27, so update them yearly. Cost isn't listed on these pages, so it shows as "not listed". Wolf Pen Creek's page lists no hours, so the card says so.
 
+## 4. The Theatre Company of Bryan/College Station — event calendar
+
+- Starting page: https://www.theatrecompany.com/calendar (the community theatre's "2026 Event Calendar", a Squarespace events collection).
+- What's there: a server-rendered list of upcoming entries — one `<article>` per performance with the title, a per-event link, a machine-readable date (`<time class="event-date" datetime="YYYY-MM-DD">`), start and end times as rendered in the site's time zone (Central: "7:00 PM"; a narrow no-break space precedes AM/PM), and a "Google Calendar" export link carrying the same instants in UTC. Date-range entries (auditions, work weeks) show two dates and no times. No venue, price, category or description is listed per event (the detail page's JSON-LD had empty `location` name/address and `offers: null` on 2026-11-05, and its body was empty), and the listing contains no ticket links.
+- `robots.txt` (Squarespace default) allows `/calendar` and `/calendar/<slug>` but **disallows** `?format=ical`, `?format=json` and the other `?format=`/`?month=`/`?view=` variants for every agent, so the per-event ICS/JSON endpoints are never requested.
+- **Update method:** one request per refresh: `https://www.theatrecompany.com/calendar` (~520 KB). The "upcoming" block is parsed; the "past" block is only counted. Dates/times are read as Central wall time and converted with the shared time helpers; each timed entry is cross-checked against its own Google Calendar link (on 2026-11-05: 53 of 53 agreed, CST and CDT alike). Detail pages are not fetched.
+- What we keep: every upcoming entry (performances, auditions, work weeks) — 53 entries on 2026-11-05 → 52 items (the site itself lists the Dec 5, 2 PM performance twice; identical production + start collapse into one item). Each performance is a one-time item; performances of one production share a `seriesId` (`theatreco:<title-slug>`). A date-range entry becomes one all-day multi-day item spanning the listed days; the instants from its calendar link are quoted in the time note only.
+- Known limitations:
+  - **No venue, price or ticket link is listed per event**, so cards say location/cost/registration "not listed". The company's address (3125 S Texas Ave, Ste 500, Bryan) appears only in the site footer and is deliberately not assumed to be the venue; tickets are sold on a separate site (ttcbcs.vbotickets.com) that the calendar does not link to.
+  - Descriptions are empty on the listing and on the checked detail page, so items have no description.
+  - Types come only from the title plus a weak "Theatre" hint, so everything (including auditions and work weeks) is "Music, film & shows".
+  - Volume is seasonal: 3 performances in the 30 days after 2026-11-05; 12–13 per show run otherwise.
+  - A Squarespace template change breaks the selectors; the refresh then fails loudly, keeps the last good data and the site shows the banner. The adapter also fails loudly if more than half of the entries' Central-time readings disagree with the page's own calendar links (time-zone setting changed).
+
 ## Demo data
 
 `public/data/demo-events.json` is **fictional** (every title starts with `[DEMO]`). It is built by `npm run demo-data` from `tests/fixtures/` through the real pipeline and only loads with `?demo=1`, where a banner and badges label it.

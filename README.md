@@ -52,7 +52,7 @@ public/ (static site) ──► loads events.json ──► filters, picks & ren
 | --- | --- |
 | `public/` | The whole website (HTML, CSS, plain ES modules). No build step. |
 | `public/js/shared/` | Logic shared by the site, the refresh script and the tests: Central-time helpers, taxonomy, filtering/picks, calendar & map links. |
-| `scripts/sources/` | One adapter per source (`cstx.mjs`, `destinationBryan.mjs`, `places.mjs`). |
+| `scripts/sources/` | One adapter per source (`cstx.mjs`, `destinationBryan.mjs`, `theatreCompany.mjs`, `places.mjs`, …). |
 | `scripts/lib/ics.mjs` | Small iCalendar reader with recurrence expansion (RRULE/RDATE/EXDATE). |
 | `data/places.json` | Hand-curated regularly-open places, each fact copied from an official page. |
 | `scripts/make-demo.mjs` | Builds the clearly-labelled demo data through the real pipeline. |
@@ -86,6 +86,6 @@ Recommended: **GitHub Pages + GitHub Actions**.
 
 Alternatives with the same $0 profile: Netlify or Cloudflare Pages for hosting with the refresh in GitHub Actions, or any machine with `cron` running `npm run refresh` and serving `public/`.
 
-**Maintenance to expect**: the Destination Bryan adapter reads HTML (discovered through the site's public event sitemap), so a site redesign can break it. The refresh then reports “layout may have changed”, keeps the last good data, and the site shows the failure banner — fix the selectors in `scripts/sources/destinationBryan.mjs`. Place hours are re-checked each refresh; if a city page changes wording, the card warns “hours may have changed” and `data/places.json` should be updated by hand. Holiday closure dates in `data/places.json` need a yearly update.
+**Maintenance to expect**: the Destination Bryan adapter reads HTML (discovered through the site's public event sitemap), so a site redesign can break it; the Theatre Company adapter reads a Squarespace page and has the same risk. The refresh then reports “layout may have changed”, keeps the last good data, and the site shows the failure banner — fix the selectors in `scripts/sources/destinationBryan.mjs`. Place hours are re-checked each refresh; if a city page changes wording, the card warns “hours may have changed” and `data/places.json` should be updated by hand. Holiday closure dates in `data/places.json` need a yearly update.
 
 See [SOURCES.md](SOURCES.md) for the source-by-source details and [docs/VERIFICATION.md](docs/VERIFICATION.md) for what was tested.

@@ -11,6 +11,7 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import * as cstx from './sources/cstx.mjs';
 import * as dbryan from './sources/destinationBryan.mjs';
+import * as theatreco from './sources/theatreCompany.mjs';
 import * as places from './sources/places.mjs';
 import { dedupe, slug } from './lib/normalize.mjs';
 import { isExpired } from '../public/js/shared/logic.js';
@@ -100,7 +101,7 @@ export function finalizeItems(all, now) {
 }
 
 export async function refresh({
-  now = Date.now(), log = console.log, sources = [cstx, dbryan, places], fetchText = politeFetchText,
+  now = Date.now(), log = console.log, sources = [cstx, dbryan, theatreco, places], fetchText = politeFetchText,
   days = +(process.env.DAYS || 30), prev, outPath = process.env.OUT || DEFAULT_OUT, write = true,
 } = {}) {
   if (prev === undefined) prev = await loadPrevious(fetchText, log);
