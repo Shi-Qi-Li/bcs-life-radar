@@ -1,13 +1,14 @@
 :root {
-  --bg: #f7f7f4;
+  /* Aggie Maroon (#500000) is Texas A&M's official maroon; everything else is warm neutral. */
+  --bg: #f8f6f4;
   --surface: #ffffff;
-  --surface-2: #eef1ef;
-  --text: #1c2321;
-  --muted: #5a6662;
-  --line: #d9dfdc;
-  --accent: #0f5f5c;
+  --surface-2: #f1ecea;
+  --text: #221c1c;
+  --muted: #665b5b;
+  --line: #ddd4d2;
+  --accent: #500000;
   --accent-ink: #ffffff;
-  --accent-soft: #dceeec;
+  --accent-soft: #f3e4e2;
   --warn-bg: #fff4d6;
   --warn-line: #e5c35c;
   --warn-ink: #5c4300;
@@ -17,16 +18,22 @@
   --demo-line: #a993ef;
   --good: #1f7a3a;
   --radius: 14px;
-  --shadow: 0 1px 2px rgb(0 0 0 / 6%), 0 4px 14px rgb(0 0 0 / 5%);
+  --shadow: 0 1px 2px rgb(40 0 0 / 6%), 0 4px 14px rgb(40 0 0 / 5%);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #121615; --surface: #1b2120; --surface-2: #232b29; --text: #e7ecea; --muted: #a2afab;
-    --line: #34403d; --accent: #5fc4bc; --accent-ink: #0b1716; --accent-soft: #1e3a37;
+    --bg: #151212; --surface: #1f1a1a; --surface-2: #2a2323; --text: #ede6e6; --muted: #aa9f9f;
+    --line: #3e3434; --accent: #e3a7a7; --accent-ink: #2e0a0a; --accent-soft: #3d2222;
     --warn-bg: #3a3016; --warn-line: #7d6420; --warn-ink: #f3dc98; --err-bg: #3d1f1b; --err-line: #8a4238;
     --demo-bg: #2a2342; --demo-line: #6b58b8; --good: #6fd08b; --shadow: none; color-scheme: dark;
   }
+}
+:root[data-theme="dark"] {
+  --bg: #151212; --surface: #1f1a1a; --surface-2: #2a2323; --text: #ede6e6; --muted: #aa9f9f;
+  --line: #3e3434; --accent: #e3a7a7; --accent-ink: #2e0a0a; --accent-soft: #3d2222;
+  --warn-bg: #3a3016; --warn-line: #7d6420; --warn-ink: #f3dc98; --err-bg: #3d1f1b; --err-line: #8a4238;
+  --demo-bg: #2a2342; --demo-line: #6b58b8; --good: #6fd08b; --shadow: none; color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -140,7 +147,11 @@ input[type="date"] { width: auto; }
   :root:not([data-theme="light"]) .badge.kind-multi-day { color: #f0c987; border-color: #6e5226; }
   :root:not([data-theme="light"]) .badge.kind-place { border-color: #2e6a40; }
 }
-.reason { margin: 0; font-size: .875rem; background: var(--accent-soft); border-radius: 8px; padding: 6px 10px; }
+:root[data-theme="dark"] .badge.kind-one-time { color: #c9a8f0; border-color: #5b3f80; }
+:root[data-theme="dark"] .badge.kind-recurring { color: #8fd3ec; border-color: #2e5f70; }
+:root[data-theme="dark"] .badge.kind-multi-day { color: #f0c987; border-color: #6e5226; }
+:root[data-theme="dark"] .badge.kind-place { border-color: #2e6a40; }
+.reason { margin: 0; font-size: .875rem; background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 8px; padding: 6px 10px; }
 .reason b { font-weight: 700; }
 .card .desc { margin: 0; color: var(--muted); font-size: .9rem; overflow-wrap: anywhere; }
 .facts { margin: 0; display: grid; gap: 4px; font-size: .9rem; }
