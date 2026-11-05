@@ -437,7 +437,8 @@ export function makeTempestSource(config) {
     const cardsByUrl = new Map();
     let entries = null;
     try {
-      entries = parseSitemap(await fetchText(SOURCE.sitemapUrl));
+      // The sitemap is usually instant but occasionally stalls (cold cache); give it longer and one more try.
+      entries = parseSitemap(await fetchText(SOURCE.sitemapUrl, { tries: 3, timeoutMs: 90_000 }));
     } catch (e) {
       if (!config.listingFallback) throw new Error(`Event sitemap unavailable (${e.message}) — this site has no server-rendered listing to fall back on`);
       stats.notes.push(`Sitemap unavailable (${e.message}) — falling back to listing pages`);

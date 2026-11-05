@@ -2,18 +2,18 @@
 
 All results below were produced by running the commands in this repository or by the scheduled GitHub Actions job. Re-run them with `npm test` and `npm run test:ui`.
 
-## Real data, end to end (GitHub Actions run 41980216492, 06:24 UTC)
+## Real data, end to end (GitHub Actions run 41982146182, 06:42 UTC)
 
 | Source | Method | Result |
 | --- | --- | --- |
 | City of College Station Calendar | public ICS feed, 1 request | OK: 34 activity dates in the next 30 days (meetings, closures, notices, internal, cancelled and civic programmes excluded) |
-| Destination Bryan | event sitemap + 116 event pages, 1 request at a time | OK: 189 activity dates, 0 failed pages, exhibits collapsed into ongoing items |
-| Visit College Station | event sitemap + 63 event pages, 1 request at a time | OK: see the seven-source run below |
+| Destination Bryan | event sitemap + 116 event pages, 1 request at a time | OK: 189 activity dates in the 06:24 run (0 failed pages, exhibits collapsed into ongoing items). In the 06:42 run the sitemap request timed out and the adapter fell back to the listing as designed (12 pages → 64 event pages → 153 dates, flagged "coverage is partial" in its stats); the sitemap fetch now gets a longer timeout and an extra retry. |
+| Visit College Station | event sitemap + 63 event pages, 1 request at a time | OK: 63/63 pages, 50 activity dates (17 pages are beyond the 30-day window) |
 | Bryan + College Station Public Library | public Tockify calendar state, 2 requests | OK: 70 activity dates (closure notices excluded) |
 | Texas A&M University Events Calendar | official JSON feed, 1 request | OK: 68 feed records → 30 public-facing in-person activity dates (34 bus notices, 1 online, 2 not public-facing, 1 same-id duplicate excluded) |
 | The Theatre Company | one listing page | OK: 3 performances in the next 30 days (52 across the season) |
 | Places (curated) | 4 official facility pages re-checked | OK: all hours/address snippets still present |
-| **Total** | ~125 polite requests, 4 min 12 s | **326 items**, 4 cross-source duplicates merged, 0 ended items |
+| **Total** | ~190 polite requests, 5 min 1 s | **335 items**, 9 cross-source duplicates merged (e.g. Winter Wine Premiere ← Visit College Station; Fall Book Sale at Clara B. Mounce Library ← the library calendar), 0 ended items |
 
 The live site (https://shi-qi-li.github.io/bcs-life-radar/) was loaded with Playwright on an emulated iPhone 13 and a 1366×900 desktop right after the deploy: 101 results for the next 7 days (7 repeat dates grouped), 5 top picks, day pills with per-day counts, the "Right now" strip hidden at a quiet hour, service worker active, Aggie Maroon accent, no horizontal overflow, no console errors.
 

@@ -39,13 +39,13 @@ async function reserveSlot() {
   if (at > now) await sleep(at - now);
 }
 
-export async function politeFetchText(url, { tries = 2 } = {}) {
+export async function politeFetchText(url, { tries = 2, timeoutMs = 45_000 } = {}) {
   const cacheFile = CACHE_DIR && join(CACHE_DIR, createHash('sha1').update(url).digest('hex'));
   if (cacheFile) { try { return await readFile(cacheFile, 'utf8'); } catch { /* miss */ } }
   for (let attempt = 1; ; attempt++) {
     await reserveSlot();
     try {
-      const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'text/html,text/calendar,application/xml,*/*' }, redirect: 'follow', signal: AbortSignal.timeout(45_000) });
+      const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'text/html,text/calendar,application/xml,*/*' }, redirect: 'follow', signal: AbortSignal.timeout(timeoutMs) });
       // Respect access restrictions: never retry or work around 401/403.
       if (res.status === 401 || res.status === 403) throw Object.assign(new Error(`HTTP ${res.status} (access restricted — not retrying)`), { fatal: true });
       if (res.status === 429) {
@@ -114,7 +114,7 @@ export async function refresh({
   const ctx = {
     fetchText, mapLimit, fromMs, toMs, log,
     concurrency: +(process.env.CONCURRENCY || 1), // per-source concurrency; the gate still spaces starts 1 s apart
-    maxListingPages: +(process.env.BRYAN_PAGES || 8),
+    maxListingPages: +(process.env.BRYAN_PAGES || 12),
     maxDetailPages: +(process.env.BRYAN_DETAILS || 400),
   };
 
