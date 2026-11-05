@@ -8,6 +8,7 @@ All results below were produced by running the commands in this repository or by
 | --- | --- | --- |
 | City of College Station Calendar | public ICS feed, 1 request | OK: 34 activity dates in the next 30 days (meetings, closures, notices, internal, cancelled and civic programmes excluded) |
 | Destination Bryan | event sitemap + 116 event pages, 1 request at a time | OK: 189 activity dates, 0 failed pages, exhibits collapsed into ongoing items |
+| Visit College Station | event sitemap + 63 event pages, 1 request at a time | OK: see the seven-source run below |
 | Bryan + College Station Public Library | public Tockify calendar state, 2 requests | OK: 70 activity dates (closure notices excluded) |
 | Texas A&M University Events Calendar | official JSON feed, 1 request | OK: 68 feed records → 30 public-facing in-person activity dates (34 bus notices, 1 online, 2 not public-facing, 1 same-id duplicate excluded) |
 | The Theatre Company | one listing page | OK: 3 performances in the next 30 days (52 across the season) |
